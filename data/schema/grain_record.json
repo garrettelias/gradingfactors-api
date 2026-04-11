@@ -1,0 +1,213 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GrainRecord",
+  "description": "A single grain class record for the Grading Factors API seed data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "grain_id",
+    "grain_name",
+    "kind",
+    "colour_modifier",
+    "size_modifier",
+    "source_url",
+    "effective_crop_year",
+    "last_scraped",
+    "coverage_status",
+    "grade_floor_rules",
+    "grades",
+    "factor_groups"
+  ],
+  "properties": {
+    "grain_id": {
+      "type": "string"
+    },
+    "grain_name": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["wheat", "oilseed", "pulse", "cereal"]
+    },
+    "region": {
+      "anyOf": [
+        { "type": "null" },
+        { "type": "string", "enum": ["western", "eastern"] }
+      ]
+    },
+    "use_class": {
+      "anyOf": [
+        { "type": "null" },
+        { "type": "string", "enum": ["malting", "food", "general_purpose"] }
+      ]
+    },
+    "variety_tracks": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["track_id", "grades"],
+            "properties": {
+              "track_id": { "type": "string" },
+              "grades": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "type": "string" }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "colour_modifier": {
+      "type": "boolean"
+    },
+    "size_modifier": {
+      "type": "boolean"
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "effective_crop_year": {
+      "type": "string"
+    },
+    "last_scraped": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "coverage_status": {
+      "type": "string",
+      "enum": ["complete", "partial"]
+    },
+    "fallthrough_label": {
+      "type": ["string", "null"]
+    },
+    "grade_floor_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["account", "floor_grade", "note"],
+        "properties": {
+          "account": { "type": "string" },
+          "floor_grade": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "grades": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "factor_groups": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["group_id", "group_label", "factors"],
+        "properties": {
+          "group_id": { "type": "string" },
+          "group_label": { "type": "string" },
+          "factors": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/definitions/factor" }
+          }
+        }
+      }
+    },
+    "footnotes": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "factor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["factor_id", "factor_label", "is_aggregate", "thresholds"],
+      "properties": {
+        "factor_id": { "type": "string" },
+        "factor_label": { "type": "string" },
+        "unit": { "type": ["string", "null"] },
+        "unit_alt": { "type": ["string", "null"] },
+        "threshold_direction": {
+          "anyOf": [
+            { "type": "null" },
+            { "type": "string", "enum": ["maximum", "minimum"] }
+          ]
+        },
+        "is_aggregate": { "type": "boolean" },
+        "aggregates": {
+          "anyOf": [
+            { "type": "null" },
+            { "type": "array", "items": { "type": "string" } }
+          ]
+        },
+        "footnote_ref": { "type": ["string", "null"] },
+        "thresholds": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/threshold" }
+        },
+        "fallthrough": {
+          "anyOf": [
+            { "type": "null" },
+            { "type": "string" },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/definitions/fallthrough_condition" }
+            }
+          ]
+        }
+      }
+    },
+    "threshold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value_type"],
+      "properties": {
+        "value_type": {
+          "type": "string",
+          "enum": ["numeric", "no_limit", "qualitative", "qualitative_judgment", "not_applicable"]
+        },
+        "value": {
+          "anyOf": [
+            { "type": "null" },
+            { "type": "number" },
+            { "type": "string" }
+          ]
+        },
+        "value_alt": {
+          "anyOf": [
+            { "type": "null" },
+            { "type": "number" }
+          ]
+        },
+        "threshold_note": { "type": ["string", "null"] }
+      }
+    },
+    "fallthrough_condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["condition", "region", "grade"],
+      "properties": {
+        "condition": { "type": "string" },
+        "region": { "type": ["string", "null"] },
+        "grade": { "type": "string" }
+      }
+    }
+  }
+}
