@@ -138,7 +138,7 @@ GRAIN_CONFIG: dict[str, dict] = {
 # Label and unit parsing
 # ---------------------------------------------------------------------------
 
-_DUAL_UNIT_RE = re.compile(r"\s*kg/h[Ll]\s*\(g/0\.5\s*[Ll]\)(?:,\s*C[WwEe])?$")
+_DUAL_UNIT_RE = re.compile(r"\s*kg/h[Ll]\s*\(g/0\.5\s*[Ll]\)(?:\s*,\s*C[WwEe])?$")
 _TOTAL_PCT_RE = re.compile(r"Total\s*%\s*")
 
 
@@ -170,10 +170,10 @@ def _parse_label_and_unit(raw: str) -> tuple[str, str | None, str | None]:
         label = _DUAL_UNIT_RE.sub("", raw).strip()
         return label, "kg/hL", "g/0.5 L"
 
-    # Aggregate "Total %" label — % is part of the label, not a unit
+    # Aggregate "Total %" label — unit is always %
     if _TOTAL_PCT_RE.search(raw):
         label = _TOTAL_PCT_RE.sub("Total % ", raw, count=1).strip()
-        return label, None, None
+        return label, "%", None
 
     # Trailing % (with or without preceding space)
     if raw.endswith("%"):
@@ -198,7 +198,7 @@ def _to_factor_id(label: str) -> str:
 
 _DUAL_NUM_RE = re.compile(r"^(\d+(?:\.\d+)?)\s*\((\d+(?:\.\d+)?)\)$")
 _PURE_NUM_RE = re.compile(r"^(\d+(?:\.\d+)?)$")
-_NO_LIMIT_TERMS = {"no limit", "no minimum"}
+_NO_LIMIT_PREFIXES = ("no limit", "no minimum")
 
 
 def _parse_threshold_cell(text: str) -> dict:
@@ -209,8 +209,12 @@ def _parse_threshold_cell(text: str) -> dict:
     if not text or text.lower() == "not applicable":
         return {**base, "value_type": "not_applicable"}
 
-    if text.lower() in _NO_LIMIT_TERMS:
-        return {**base, "value_type": "no_limit"}
+    # Fix 3: "No limit" / "No minimum" — with optional trailing note in threshold_note
+    text_lower = text.lower()
+    for prefix in _NO_LIMIT_PREFIXES:
+        if text_lower.startswith(prefix):
+            note = text[len(prefix):].strip() or None
+            return {**base, "value_type": "no_limit", "threshold_note": note}
 
     # Dual-unit numeric: "75 (365)"
     m = _DUAL_NUM_RE.match(text)
@@ -222,13 +226,32 @@ def _parse_threshold_cell(text: str) -> dict:
     if m:
         return {**base, "value_type": "numeric", "value": float(m.group(1))}
 
-    # Everything else: qualitative (prose, mixed prose+number, "No limit within..." etc.)
+    # Everything else: qualitative (prose, mixed prose+number, etc.)
     return {**base, "value_type": "qualitative", "value": text}
 
 
 # ---------------------------------------------------------------------------
 # Fallthrough cell parsing
 # ---------------------------------------------------------------------------
+
+_OVER_SPLIT_RE = re.compile(r"^(.*?)\s+[Oo]ver\s+([\d.]+)%\s*[-—–]\s*(.+)$")
+_OR_LESS_PREFIX_RE = re.compile(r"^([\d.]+)%\s+or\s+less\s*[-—–]\s*(.+)$", re.IGNORECASE)
+
+
+def _parse_over_fallthrough(text: str) -> list | None:
+    """Parse 'X% or less — grade_le Over X% — grade_gt' or 'grade_le Over X% — grade_gt'
+    into a list of condition objects matching the seed schema."""
+    m = _OVER_SPLIT_RE.match(text)
+    if not m:
+        return None
+    pre, threshold, grade_gt = m.group(1).strip(), m.group(2), m.group(3).strip()
+    pm = _OR_LESS_PREFIX_RE.match(pre)
+    grade_le = pm.group(2).strip() if pm else pre
+    return [
+        {"condition": f"<= {threshold}%", "region": None, "grade": grade_le},
+        {"condition": f"> {threshold}%", "region": None, "grade": grade_gt},
+    ]
+
 
 def _parse_fallthrough_cell(td) -> object:
     """Parse the final (fallthrough) column cell.
@@ -238,6 +261,11 @@ def _parse_fallthrough_cell(td) -> object:
       - A list of condition objects for canola stones branching case
       - A plain string for all other cases
     """
+    # Treat &nbsp;-only cells as null (malformed pages may omit </tr> and leave
+    # only a non-breaking space as a visual placeholder for an empty cell).
+    if not td.get_text().replace("\xa0", "").strip():
+        return None
+
     # Canola stones: bold West/East markers indicate branching by region
     strong_texts = [s.get_text(strip=True).lower() for s in td.find_all("strong")]
     if "west" in strong_texts and "east" in strong_texts:
@@ -248,7 +276,15 @@ def _parse_fallthrough_cell(td) -> object:
     text = td.get_text(separator=" ", strip=True).replace("\xa0", " ").strip()
     # Collapse internal whitespace artifacts from separator=" "
     text = re.sub(r"\s+", " ", text).strip()
-    return text if text else None
+    if not text:
+        return None
+
+    # Fix 1: condition-split fallthrough e.g. "X% or less — grade Over X% — grade"
+    over_result = _parse_over_fallthrough(text)
+    if over_result is not None:
+        return over_result
+
+    return text
 
 
 def _parse_stones_fallthrough(td) -> list | None:
@@ -277,17 +313,27 @@ def _parse_stones_fallthrough(td) -> list | None:
     west_grade = re.sub(r"^-\s*", "", west_raw)
     west_grade = re.sub(r",\s*or\s*$", "", west_grade).strip()
 
-    # East grade (and trailing "Over N%—Grade")
+    # East grade and trailing "Over N%—Grade".
+    # Two layouts exist:
+    #   Canola: "Over" is embedded in the same string as the east grade.
+    #   Soybeans: a <br> puts "Over" in a separate stripped_string after east.
     east_raw = strings[east_idx + 1] if east_idx + 1 < len(strings) else ""
     east_raw = re.sub(r"^-\s*", "", east_raw)
-    over_m = re.search(
-        r"^(.*?)\s+[Oo]ver\s+[\d.]+%\s*[—\-]\s*(.+)$", east_raw
-    )
-    if not over_m:
-        return None
-
-    east_grade = over_m.group(1).strip()
-    over_grade = over_m.group(2).strip()
+    over_m = re.search(r"^(.*?)\s+[Oo]ver\s+[\d.]+%\s*[—–\-]\s*(.+)$", east_raw)
+    if over_m:
+        east_grade = over_m.group(1).strip()
+        over_grade = over_m.group(2).strip()
+    else:
+        # Scan forward for a standalone "Over N%—Grade" string (e.g. after <br>).
+        east_grade = east_raw.strip()
+        over_grade = None
+        for s in strings[east_idx + 2:]:
+            over_m2 = re.search(r"[Oo]ver\s+[\d.]+%\s*[—–\-]\s*(.+)$", s)
+            if over_m2:
+                over_grade = over_m2.group(1).strip()
+                break
+        if over_grade is None:
+            return None
 
     return [
         {"condition": f"<= {threshold}%", "region": "west", "grade": west_grade},
@@ -312,6 +358,9 @@ def _extract_footnotes(table) -> dict[str, str]:
         p = dd.find("p", class_=lambda c: c is None or "fn-rtn" not in (c or ""))
         raw = p.get_text(separator=" ") if p else dd.get_text(separator=" ")
         text = re.sub(r"\s+", " ", raw).strip()
+        # Fix: separator=" " inserts a space before punctuation that immediately
+        # follows a closing inline tag (e.g. <a>text</a>.) — collapse it.
+        text = re.sub(r"\s+([.,;:])", r"\1", text)
         if fn_id and text:
             footnotes[fn_id] = text
     return footnotes
@@ -322,22 +371,21 @@ def _extract_footnotes(table) -> dict[str, str]:
 # ---------------------------------------------------------------------------
 
 def _caption_to_group(caption_text: str) -> tuple[str, str]:
-    """Map table caption text to (group_id, group_label)."""
-    low = caption_text.lower()
-    if "standard of quality" in low:
-        return "standard_of_quality", "Standard of quality"
-    if "grading factors" in low:
-        return "grading_factors", "Grading factors"
-    if "foreign material" in low:
-        return "foreign_material", "Foreign material"
-    if "damage" in low:
-        return "damage", "Damage"
-    if "other factors" in low:
-        return "other_factors", "Other factors"
-    # Fallback: derive from caption tail
-    tail = caption_text.split(",")[-1].strip()
-    slug = re.sub(r"[^a-z0-9]+", "_", tail.lower()).strip("_")
-    return slug, tail
+    """Map table caption text to (group_id, group_label).
+
+    CGC captions follow the pattern "GrainName (CODE), group label".
+    Strip the grain name prefix (everything up to and including the first "), ")
+    then slugify the remainder for group_id and sentence-case it for group_label.
+    This correctly handles extended labels such as
+    "foreign material included in dockage" without truncating at the first keyword.
+    """
+    if "), " in caption_text:
+        label = caption_text[caption_text.index("), ") + 3:].strip()
+    else:
+        label = caption_text.strip()
+    group_id = re.sub(r"[^a-z0-9]+", "_", label.lower()).strip("_")
+    group_label = label[0].upper() + label[1:] if label else label
+    return group_id, group_label
 
 
 def _parse_table(table) -> tuple[list[str], str, list[dict], dict[str, str]]:
@@ -366,15 +414,30 @@ def _parse_table(table) -> tuple[list[str], str, list[dict], dict[str, str]]:
     footnotes = _extract_footnotes(table)
 
     # --- Factor rows ---
+    # current_sub_group tracks non-aggregate factor_ids since the last border-top
+    # separator or the last aggregate row, whichever came last. Active (aggregate)
+    # rows consume this buffer as their `aggregates` list.
+    # last_factor_id is a fallback for consecutive active rows: when the buffer is
+    # empty because the immediately preceding row was itself active, the current
+    # active row aggregates [last_factor_id] rather than returning null.
+    current_sub_group: list[str] = []
+    last_factor_id: str | None = None
     factors: list[dict] = []
     for row in rows[1:]:
-        cells = row.find_all(["th", "td"])
+        # Use recursive=False so that malformed HTML (missing </tr>) cannot cause
+        # a nested <tr>'s cells to appear in this row's cell list.
+        cells = row.find_all(["th", "td"], recursive=False)
         if not cells:
             continue
         # Skip footnote rows (first cell is a wide <td>)
         if cells[0].name == "td":
             continue
         # Must be a factor row: first cell is <th>
+        is_active = "active" in (row.get("class") or [])
+        th_style = cells[0].get("style", "") or ""
+        has_border_top = "border-top: 2px solid" in th_style
+        has_border_bottom = "border-bottom: 2px solid" in th_style
+
         raw_label, footnote_ref = _extract_th_label(cells[0])
         factor_label, unit, unit_alt = _parse_label_and_unit(raw_label)
         factor_id = _to_factor_id(factor_label)
@@ -393,16 +456,90 @@ def _parse_table(table) -> tuple[list[str], str, list[dict], dict[str, str]]:
 
         thresholds: dict = {}
         has_numeric = False
+        has_no_limit = False
         for grade, td in zip(grades, threshold_tds):
-            text = td.get_text(strip=True).replace("\xa0", " ").strip()
+            # Fix: use separator=" " so inline tags (e.g. <abbr>) don't drop
+            # the space that precedes them when strip=True strips text nodes.
+            text = td.get_text(separator=" ", strip=True).replace("\xa0", " ")
+            text = re.sub(r"\s+", " ", text).strip()
+            text = re.sub(r"\s+([.,;:])", r"\1", text)
             t = _parse_threshold_cell(text)
             thresholds[grade] = t
             if t["value_type"] == "numeric":
                 has_numeric = True
+            elif t["value_type"] == "no_limit":
+                has_no_limit = True
 
-        # Default non-minimum factors with any numeric threshold to "maximum"
-        if has_numeric and threshold_direction is None:
+        # Default non-minimum factors with any numeric OR no_limit threshold to
+        # "maximum". no_limit means an explicit upper bound exists but is uncapped;
+        # it still implies a maximum direction (e.g. other_hulless_varieties %).
+        if (has_numeric or has_no_limit) and threshold_direction is None:
             threshold_direction = "maximum"
+
+        # Two-pass value_type assignment: if any grade on this factor is numeric,
+        # text-valued grades are qualitative_judgment (a judgment instruction standing
+        # in for a number), not plain qualitative (a purely descriptive factor).
+        # Exception: if the text value itself contains digits or '%' it is a
+        # self-specifying definitional standard (e.g. "10%, either alone or in
+        # combination..."), not a judgment proxy — leave it as qualitative.
+        if has_numeric:
+            for t in thresholds.values():
+                if t["value_type"] == "qualitative":
+                    val = t.get("value") or ""
+                    if not any(c.isdigit() or c == "%" for c in val):
+                        t["value_type"] = "qualitative_judgment"
+
+        # Build aggregates from sub-group buffer using class="active" and border
+        # indicators on the TH cell.
+        #
+        # border-top on a non-active TH: start a new sub-group (reset buffer).
+        # border-bottom on an active TH: tight end-of-sub-group marker — aggregate
+        #   only the immediately preceding factor (last_factor_id) and leave the
+        #   buffer intact so a later non-border-bottom active row can still see the
+        #   full accumulated history (e.g. BARLEY total_mineral_matter → stones only,
+        #   while total_foreign_material later aggregates all factors including stones).
+        # No border indicators on active TH: consume the full buffer (standard case).
+        # Empty buffer on active row: fall back to [last_factor_id] to handle chains
+        #   of consecutive active rows (e.g. CWAD Total % Smudge → Total % Smudge
+        #   and blackpoint).
+        if is_active:
+            if has_border_bottom:
+                if current_sub_group:
+                    # Use label-word matching to identify named sub-aggregates.
+                    # e.g. "mineral matter including stones" → filter for "stones";
+                    # "conspicuous admixture" → no buffer member matches → full buffer.
+                    label_lower = factor_label.lower().replace("total %", "").strip()
+                    _stop = {"", "and", "or", "the", "of", "in", "with", "including"}
+                    label_words = {
+                        w for w in re.split(r"[^a-z]+", label_lower) if w not in _stop
+                    }
+                    named = [
+                        fid for fid in current_sub_group
+                        if any(w in fid for w in label_words)
+                    ]
+                    aggregates = named if named else current_sub_group.copy()
+                elif last_factor_id is not None:
+                    aggregates = [last_factor_id]
+                else:
+                    aggregates = None
+                # intentionally do NOT reset current_sub_group
+            elif current_sub_group:
+                aggregates = current_sub_group.copy()
+                current_sub_group = []
+            elif last_factor_id is not None:
+                aggregates = [last_factor_id]
+                current_sub_group = []
+            else:
+                aggregates = None
+                current_sub_group = []
+        else:
+            aggregates = None
+            if has_border_top:
+                current_sub_group = [factor_id]
+            elif unit == "%" and has_numeric:
+                current_sub_group.append(factor_id)
+
+        last_factor_id = factor_id
 
         # Fallthrough
         fallthrough = _parse_fallthrough_cell(fallthrough_td) if fallthrough_td else None
@@ -414,7 +551,7 @@ def _parse_table(table) -> tuple[list[str], str, list[dict], dict[str, str]]:
             "unit_alt": unit_alt,
             "threshold_direction": threshold_direction,
             "is_aggregate": is_aggregate,
-            "aggregates": None,  # TODO: verify against CGC source
+            "aggregates": aggregates,
             "footnote_ref": footnote_ref,
             "thresholds": thresholds,
             "fallthrough": fallthrough,
@@ -472,7 +609,15 @@ def _assemble(
 
     for table in tables:
         caption = table.find("caption")
-        cap_text = caption.get_text(strip=True).replace("\xa0", " ") if caption else ""
+        if caption:
+            # Fix 1: strip <sup> footnote references before extracting caption text
+            # so they don't contaminate the group_id slug.
+            cap = caption.__copy__()
+            for sup in cap.find_all("sup"):
+                sup.decompose()
+            cap_text = cap.get_text(strip=True).replace("\xa0", " ")
+        else:
+            cap_text = ""
         group_id, group_label = _caption_to_group(cap_text)
 
         tbl_grades, tbl_ft_label, factors, footnotes = _parse_table(table)
@@ -480,6 +625,24 @@ def _assemble(
             grades = tbl_grades
             fallthrough_label = tbl_ft_label
         all_footnotes.update(footnotes)
+
+        # If the caption carries a footnote reference (CGC places the <sup> on the
+        # caption rather than on the first factor row), attach it to the first factor
+        # that has a non-null unit and no existing footnote_ref. Caption footnotes
+        # typically annotate the first metric factor (e.g. minimum test weight),
+        # not a qualitative descriptor that appears first in the table.
+        if caption:
+            cap_fn_link = caption.find("a", class_="fn-lnk")
+            if cap_fn_link:
+                href = cap_fn_link.get("href", "")
+                fn_id = href.lstrip("#")
+                if fn_id and factors:
+                    target = next(
+                        (f for f in factors if f.get("unit") and not f.get("footnote_ref")),
+                        None,
+                    )
+                    if target:
+                        target["footnote_ref"] = fn_id
 
         factor_groups.append({
             "group_id": group_id,

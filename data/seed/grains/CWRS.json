@@ -16,7 +16,7 @@
     {
       "account": "mildew",
       "floor_grade": "No. 3 CWRS",
-      "note": "Samples of CWRS will be graded no lower than No. 3 CWRS on account of mildew"
+      "note": "Samples of CWRS will be graded no lower than No. 3 CWRS on account of mildew."
     }
   ],
   "grades": ["No. 1 CWRS", "No. 2 CWRS", "No. 3 CWRS", "CW Feed"],
@@ -43,10 +43,10 @@
           "fallthrough": null
         },
         {
-          "factor_id": "min_test_weight",
+          "factor_id": "minimum_test_weight",
           "factor_label": "Minimum test weight",
           "unit": "kg/hL",
-          "unit_alt": "g/0.5L",
+          "unit_alt": "g/0.5 L",
           "threshold_direction": "minimum",
           "is_aggregate": false,
           "aggregates": null,
@@ -60,7 +60,7 @@
           "fallthrough": "Wheat, Sample CW Account Light Weight"
         },
         {
-          "factor_id": "min_hard_vitreous_kernels",
+          "factor_id": "minimum_hard_vitreous_kernels",
           "factor_label": "Minimum hard vitreous kernels",
           "unit": "%",
           "unit_alt": null,
@@ -77,7 +77,7 @@
           "fallthrough": null
         },
         {
-          "factor_id": "min_protein",
+          "factor_id": "minimum_protein",
           "factor_label": "Minimum protein",
           "unit": "%",
           "unit_alt": null,
@@ -296,7 +296,7 @@
           "fallthrough": "Over 10%, either alone or in combination with each other, of amber durum and any variety of the class CWSP - Wheat, Sample CW Account Admixture"
         },
         {
-          "factor_id": "total_wheats_other_classes_varieties_contrasting",
+          "factor_id": "total_wheats_of_other_classes_or_varieties_and_contrasting_classes",
           "factor_label": "Total % Wheats of other classes or varieties and contrasting classes",
           "unit": "%",
           "unit_alt": null,
@@ -592,6 +592,6 @@
   ],
   "footnotes": {
     "fnt1": "See Frost and Mildew for applicable standard",
-    "fnt2": "See working tolerance for Wheats of Other Classes or Varieties"
+    "fnt2": "See working tolerance for Wheats of Other Classes or Varieties."
   }
 }

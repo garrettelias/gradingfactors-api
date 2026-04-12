@@ -40,14 +40,14 @@
           "fallthrough": null
         },
         {
-          "factor_id": "min_test_weight",
+          "factor_id": "minimum_test_weight",
           "factor_label": "Minimum test weight",
           "unit": "kg/hL",
-          "unit_alt": "g/0.5L",
+          "unit_alt": "g/0.5 L",
           "threshold_direction": "minimum",
           "is_aggregate": false,
           "aggregates": null,
-          "footnote_ref": "fnt1",
+          "footnote_ref": "fnt2",
           "thresholds": {
             "No. 1 CE":        { "value_type": "numeric", "value": 60, "value_alt": 288, "threshold_note": null },
             "No. 2 CE":        { "value_type": "numeric", "value": 54, "value_alt": 260, "threshold_note": null },
@@ -287,7 +287,7 @@
             "No. 1 CE Hulless":{ "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null },
             "No. 2 CE Hulless":{ "value_type": "numeric", "value": 8.0, "value_alt": null, "threshold_note": null }
           },
-          "fallthrough": "50% or less- Mixed Grain CE Barley"
+          "fallthrough": "50% or less– Mixed Grain CE Barley"
         },
         {
           "factor_id": "sclerotinia",
@@ -361,7 +361,7 @@
             "No. 1 CE Hulless":{ "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null },
             "No. 2 CE Hulless":{ "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null }
           },
-          "fallthrough": "50% or less - Mixed Grain CE Barley"
+          "fallthrough": "50% or less – Mixed Grain CE Barley"
         },
         {
           "factor_id": "total_foreign_material",
@@ -378,12 +378,12 @@
             "No. 1 CE Hulless":{ "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null },
             "No. 2 CE Hulless":{ "value_type": "numeric", "value": 10.0, "value_alt": null, "threshold_note": null }
           },
-          "fallthrough": "50% or less - Mixed Grain CE Barley"
+          "fallthrough": "50% or less – Mixed Grain CE Barley"
         }
       ]
     }
   ],
   "footnotes": {
-    "fnt1": "If specs for CE Hulless grade not met add \"Hulless\" to Sample grade name"
+    "fnt2": "If specs for CE Hulless grade not met add “Hulless” to Sample grade name."
   }
 }

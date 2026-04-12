@@ -1,6 +1,6 @@
 {
   "grain_id": "CANOLA",
-  "grain_name": "Canola",
+  "grain_name": "Canola, Canada (CAN)",
   "kind": "oilseed",
   "region": null,
   "use_class": null,
@@ -52,7 +52,7 @@
           "fallthrough": null
         },
         {
-          "factor_id": "standard_of_cleanliness_commercially_pure_seed",
+          "factor_id": "standard_of_cleaniness_commercially_pure_seed",
           "factor_label": "Standard of cleaniness Commercially pure seed",
           "unit": null,
           "unit_alt": null,
@@ -226,7 +226,7 @@
             "No. 3 Canada": { "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null }
           },
           "fallthrough": [
-            { "condition": "<= 50%", "region": null, "grade": "Canola, Sample Canada Account Admixture" },
+            { "condition": "<= 50%", "region": null, "grade": "Canola, Sample Canada Account Admixture." },
             { "condition": "> 50%",  "region": null, "grade": "Refuse screenings" }
           ]
         }

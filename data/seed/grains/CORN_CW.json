@@ -38,10 +38,10 @@
           "fallthrough": null
         },
         {
-          "factor_id": "min_test_weight",
+          "factor_id": "minimum_test_weight",
           "factor_label": "Minimum test weight",
           "unit": "kg/hL",
-          "unit_alt": "g/0.5L",
+          "unit_alt": "g/0.5 L",
           "threshold_direction": "minimum",
           "is_aggregate": false,
           "aggregates": null,

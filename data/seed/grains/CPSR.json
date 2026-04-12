@@ -42,10 +42,10 @@
           "fallthrough": null
         },
         {
-          "factor_id": "min_test_weight",
+          "factor_id": "minimum_test_weight",
           "factor_label": "Minimum test weight",
           "unit": "kg/hL",
-          "unit_alt": "g/0.5L",
+          "unit_alt": "g/0.5 L",
           "threshold_direction": "minimum",
           "is_aggregate": false,
           "aggregates": null,
@@ -201,7 +201,7 @@
           "fallthrough": "Over 10%, either alone or in combination with each other, of amber durum and any variety of the class CWSP - Wheat, Sample CW Account Admixture"
         },
         {
-          "factor_id": "total_wheats_other_classes_varieties_contrasting",
+          "factor_id": "total_wheats_of_other_classes_or_varieties_and_contrasting_classes",
           "factor_label": "Total % Wheats of other classes or varieties and contrasting classes",
           "unit": "%",
           "unit_alt": null,
@@ -543,7 +543,7 @@
     }
   ],
   "footnotes": {
-    "fnt1": "See Frost and Mildew for applicable standard",
-    "fnt2": "See working tolerance for Wheats of Other Classes or Varieties"
+    "fnt1": "See Frost and Mildew for applicable standard.",
+    "fnt2": "See working tolerance for Wheats of Other Classes or Varieties."
   }
 }

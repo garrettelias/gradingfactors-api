@@ -38,10 +38,10 @@
           "fallthrough": null
         },
         {
-          "factor_id": "min_test_weight",
+          "factor_id": "minimum_test_weight",
           "factor_label": "Minimum test weight",
           "unit": "kg/hL",
-          "unit_alt": "g/0.5L",
+          "unit_alt": "g/0.5 L",
           "threshold_direction": "minimum",
           "is_aggregate": false,
           "aggregates": null,
@@ -186,7 +186,7 @@
           "threshold_direction": "maximum",
           "is_aggregate": false,
           "aggregates": null,
-          "footnote_ref": "fnt1",
+          "footnote_ref": "fnt2",
           "thresholds": {
             "No. 1 CE": { "value_type": "numeric", "value": 0.15, "value_alt": null, "threshold_note": null },
             "No. 2 CE": { "value_type": "numeric", "value": 0.15, "value_alt": null, "threshold_note": null },
@@ -203,6 +203,6 @@
     }
   ],
   "footnotes": {
-    "fnt1": "Stones are not included in Total cracked corn and foreign material"
+    "fnt2": "Stones are not included in Total cracked corn and foreign material"
   }
 }
