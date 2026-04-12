@@ -1,0 +1,389 @@
+{
+  "grain_id": "BARLEY_GP_CE",
+  "grain_name": "Barley, Canada Eastern General Purpose",
+  "kind": "cereal",
+  "region": "eastern",
+  "use_class": "general_purpose",
+  "variety_tracks": [
+    { "track_id": "covered", "grades": ["No. 1 CE", "No. 2 CE"] },
+    { "track_id": "hulless", "grades": ["No. 1 CE Hulless", "No. 2 CE Hulless"] }
+  ],
+  "colour_modifier": false,
+  "size_modifier": false,
+  "source_url": "https://grainscanada.gc.ca/en/grain-quality/official-grain-grading-guide/06-barley/primary-export-grade-determination/general-purpose-barley.html",
+  "effective_crop_year": "2025/26",
+  "last_scraped": "2026-04-11T00:00:00Z",
+  "coverage_status": "complete",
+  "fallthrough_label": "Grade, if No. 2 specs not met",
+  "grade_floor_rules": [],
+  "grades": ["No. 1 CE", "No. 2 CE", "No. 1 CE Hulless", "No. 2 CE Hulless"],
+  "factor_groups": [
+    {
+      "group_id": "standard_of_quality",
+      "group_label": "Standard of quality",
+      "factors": [
+        {
+          "factor_id": "degree_of_soundness",
+          "factor_label": "Degree of soundness",
+          "unit": null,
+          "unit_alt": null,
+          "threshold_direction": null,
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "qualitative", "value": "Reasonably sweet, may be frost-damaged, weather-stained or otherwise damaged", "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "qualitative", "value": "Fairly sweet, excluded from other grades of barley on account of immature or severely damaged kernels", "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "qualitative", "value": "Reasonably sweet, may be frost-damaged, weather-stained or otherwise damaged", "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "qualitative", "value": "Fairly sweet, excluded from other grades of barley on account of immature or severely damaged kernels", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "min_test_weight",
+          "factor_label": "Minimum test weight",
+          "unit": "kg/hL",
+          "unit_alt": "g/0.5L",
+          "threshold_direction": "minimum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": "fnt1",
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 60, "value_alt": 288, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 54, "value_alt": 260, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 72, "value_alt": 352, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 65, "value_alt": 314, "threshold_note": null }
+          },
+          "fallthrough": "Barley, Sample CE Account Light Weight"
+        },
+        {
+          "factor_id": "variety",
+          "factor_label": "Variety",
+          "unit": null,
+          "unit_alt": null,
+          "threshold_direction": null,
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "qualitative", "value": "Any variety of barley registered under the Seeds Act", "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "qualitative", "value": "Any variety of barley", "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "qualitative", "value": "Any variety of hulless barley registered under the Seeds Act", "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "qualitative", "value": "Any variety of hulless barley", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "varieties_with_adhered_hulls",
+          "factor_label": "Varieties with adhered hulls",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "not_applicable", "value": null, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "not_applicable", "value": null, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 10, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 20, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "other_hulless_varieties",
+          "factor_label": "Other hulless varieties",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "not_applicable", "value": null, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "not_applicable", "value": null, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "total_adhered_hulls",
+          "factor_label": "Total % Adhered hulls",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["varieties_with_adhered_hulls"],
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "not_applicable", "value": null, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "not_applicable", "value": null, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 10, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 20, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        }
+      ]
+    },
+    {
+      "group_id": "damage",
+      "group_label": "Damage",
+      "factors": [
+        {
+          "factor_id": "broken",
+          "factor_label": "Broken",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 15, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 25, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 15, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 25, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Barley, Sample CE Broken"
+        },
+        {
+          "factor_id": "fireburnt",
+          "factor_label": "Fireburnt",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 0.0, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 0.5, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 0.0, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 0.5, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Barley, Sample CE Account Fireburnt"
+        },
+        {
+          "factor_id": "fusarium",
+          "factor_label": "Fusarium",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Barley, Sample CE Account Fusarium"
+        },
+        {
+          "factor_id": "heated_rotted_severely_mildewed",
+          "factor_label": "Heated, rotted, severely mildewed",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 0.5, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 0.5, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Barley, Sample CE Account Heated"
+        },
+        {
+          "factor_id": "sprouted",
+          "factor_label": "Sprouted",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 10, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 20, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 10, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 20, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Barley, Sample CE Account Sprouted"
+        }
+      ]
+    },
+    {
+      "group_id": "foreign_material",
+      "group_label": "Foreign material",
+      "factors": [
+        {
+          "factor_id": "ergot",
+          "factor_label": "Ergot",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Barley, Sample CE Account Ergot"
+        },
+        {
+          "factor_id": "excreta",
+          "factor_label": "Excreta",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 0.02, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 0.02, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 0.02, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 0.02, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Barley, Sample CE Account Excreta"
+        },
+        {
+          "factor_id": "inseparable_seeds",
+          "factor_label": "Inseparable seeds",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 0.2, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 0.2, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 0.2, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 0.2, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Barley, Sample CE Account Admixture"
+        },
+        {
+          "factor_id": "other_cereal_grains",
+          "factor_label": "Other cereal grains",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 8.0, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 8.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "50% or less- Mixed Grain CE Barley"
+        },
+        {
+          "factor_id": "sclerotinia",
+          "factor_label": "Sclerotinia",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Barley, Sample CE Account Admixture"
+        },
+        {
+          "factor_id": "stones",
+          "factor_label": "Stones",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 0.15, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 0.15, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 0.15, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 0.15, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": [
+            { "condition": "<= 2.5%", "region": null, "grade": "Barley Sample CE Account Stones" },
+            { "condition": "> 2.5%",  "region": null, "grade": "Barley, Sample Salvage" }
+          ]
+        },
+        {
+          "factor_id": "total_mineral_matter_including_stones",
+          "factor_label": "Total % Mineral matter including stones",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["stones"],
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 0.25, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 0.25, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 0.25, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 0.25, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": [
+            { "condition": "<= 2.5%", "region": null, "grade": "Barley, Sample CE Account Stones" },
+            { "condition": "> 2.5%",  "region": null, "grade": "Barley, Sample Salvage" }
+          ]
+        },
+        {
+          "factor_id": "wild_oats",
+          "factor_label": "Wild oats",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "50% or less - Mixed Grain CE Barley"
+        },
+        {
+          "factor_id": "total_foreign_material",
+          "factor_label": "Total % Foreign material",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["ergot", "excreta", "inseparable_seeds", "other_cereal_grains", "sclerotinia", "stones", "wild_oats"],
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE":        { "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null },
+            "No. 2 CE":        { "value_type": "numeric", "value": 10.0, "value_alt": null, "threshold_note": null },
+            "No. 1 CE Hulless":{ "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null },
+            "No. 2 CE Hulless":{ "value_type": "numeric", "value": 10.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "50% or less - Mixed Grain CE Barley"
+        }
+      ]
+    }
+  ],
+  "footnotes": {
+    "fnt1": "If specs for CE Hulless grade not met add \"Hulless\" to Sample grade name"
+  }
+}

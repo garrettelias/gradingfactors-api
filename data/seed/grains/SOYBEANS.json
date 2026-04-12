@@ -1,0 +1,285 @@
+{
+  "grain_id": "SOYBEANS",
+  "grain_name": "Soybeans, Canada Yellow, Green, Brown, Black or Mixed",
+  "kind": "pulse",
+  "region": null,
+  "use_class": null,
+  "variety_tracks": null,
+  "colour_modifier": true,
+  "size_modifier": false,
+  "source_url": "https://www.grainscanada.gc.ca/en/grain-quality/official-grain-grading-guide/20-soybeans/primary-export-grade-determination-tables.html",
+  "effective_crop_year": "2025/26",
+  "last_scraped": "2026-04-11T00:00:00Z",
+  "coverage_status": "complete",
+  "fallthrough_label": "Grade, if No. 5 specs not met",
+  "grade_floor_rules": [],
+  "grades": ["No. 1 Canada", "No. 2 Canada", "No. 3 Canada", "No. 4 Canada", "No. 5 Canada"],
+  "factor_groups": [
+    {
+      "group_id": "standard_of_quality",
+      "group_label": "Standard of quality",
+      "factors": [
+        {
+          "factor_id": "degree_of_soundness",
+          "factor_label": "Degree of soundness",
+          "unit": null,
+          "unit_alt": null,
+          "threshold_direction": null,
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "qualitative", "value": "Cool, natural odour, good natural colour", "value_alt": null, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "qualitative", "value": "Cool, natural odour, may be slightly stained", "value_alt": null, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "qualitative", "value": "Cool, natural odour, may be stained", "value_alt": null, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "qualitative", "value": "Cool, may be stained", "value_alt": null, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "qualitative", "value": "Cool, may be stained", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "min_test_weight",
+          "factor_label": "Minimum test weight",
+          "unit": "kg/hL",
+          "unit_alt": "g/0.5L",
+          "threshold_direction": "minimum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "numeric", "value": 70, "value_alt": 356, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "numeric", "value": 68, "value_alt": 346, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "numeric", "value": 66, "value_alt": 335, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "numeric", "value": 63, "value_alt": 320, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "numeric", "value": 59, "value_alt": 298, "threshold_note": null }
+          },
+          "fallthrough": "Soybeans, Sample Canada (colour) Account Light Weight"
+        },
+        {
+          "factor_id": "variety",
+          "factor_label": "Variety",
+          "unit": null,
+          "unit_alt": null,
+          "threshold_direction": null,
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": "fnt1",
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "qualitative", "value": "Any variety of soybeans registered under the Seeds Act", "value_alt": null, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "qualitative", "value": "Any variety of soybeans registered under the Seeds Act", "value_alt": null, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "qualitative", "value": "Any variety of soybeans registered under the Seeds Act", "value_alt": null, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "qualitative", "value": "Any variety of soybeans registered under the Seeds Act", "value_alt": null, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "qualitative", "value": "Any variety of soybeans", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "other_colours",
+          "factor_label": "Other colours",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": "fnt2",
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "numeric", "value": 2, "value_alt": null, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "numeric", "value": 3, "value_alt": null, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "numeric", "value": 10, "value_alt": null, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "numeric", "value": 15, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Appropriate mixed grade"
+        }
+      ]
+    },
+    {
+      "group_id": "damage",
+      "group_label": "Damage",
+      "factors": [
+        {
+          "factor_id": "heat_damaged_or_moldy",
+          "factor_label": "Heat-damaged or moldy",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "numeric", "value": 0.0, "value_alt": null, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "numeric", "value": 0.2, "value_alt": null, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "numeric", "value": 3.0, "value_alt": null, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "numeric", "value": 5.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Soybeans, Sample Canada (colour) Account Heated or Mouldy"
+        },
+        {
+          "factor_id": "total_damage",
+          "factor_label": "Total % Damage",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["heat_damaged_or_moldy"],
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "numeric", "value": 2, "value_alt": null, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "numeric", "value": 3, "value_alt": null, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "numeric", "value": 8, "value_alt": null, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "numeric", "value": 15, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Soybeans, Sample Canada (colour) Account Damaged"
+        }
+      ]
+    },
+    {
+      "group_id": "foreign_material",
+      "group_label": "Foreign material",
+      "factors": [
+        {
+          "factor_id": "ergot",
+          "factor_label": "Ergot",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "numeric", "value": 0.01, "value_alt": null, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "numeric", "value": 0.03, "value_alt": null, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "numeric", "value": 0.10, "value_alt": null, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "numeric", "value": 0.25, "value_alt": null, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "numeric", "value": 0.25, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Soybeans, Sample Canada (colour) Account Ergot"
+        },
+        {
+          "factor_id": "excreta",
+          "factor_label": "Excreta",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "numeric", "value": 0.01, "value_alt": null, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "numeric", "value": 0.01, "value_alt": null, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "numeric", "value": 0.01, "value_alt": null, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "numeric", "value": 0.01, "value_alt": null, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "numeric", "value": 0.01, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Soybeans, Sample Canada (colour) Account Excreta"
+        },
+        {
+          "factor_id": "foreign_material_other_than_grain",
+          "factor_label": "Foreign material other than grain",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "numeric", "value": 0.3, "value_alt": null, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "numeric", "value": 0.5, "value_alt": null, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "numeric", "value": 2.0, "value_alt": null, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "numeric", "value": 3.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Soybeans, Sample Canada (colour) Account Admixture"
+        },
+        {
+          "factor_id": "stones",
+          "factor_label": "Stones",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "numeric", "value": 0.0, "value_alt": null, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": [
+            { "condition": "<= 2.5%", "region": "west", "grade": "Soybeans, Rejected (grade) Account Stones" },
+            { "condition": "<= 2.5%", "region": "east", "grade": "Soybeans, Sample Canada (colour) Account Stones" },
+            { "condition": "> 2.5%",  "region": null,   "grade": "Soybeans, Sample Salvage" }
+          ]
+        },
+        {
+          "factor_id": "total_foreign_material",
+          "factor_label": "Total % Foreign material",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["ergot", "excreta", "foreign_material_other_than_grain", "stones"],
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "numeric", "value": 1, "value_alt": null, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "numeric", "value": 2, "value_alt": null, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "numeric", "value": 3, "value_alt": null, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "numeric", "value": 8, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Soybeans, Sample Canada (colour) Account Admixture"
+        }
+      ]
+    },
+    {
+      "group_id": "other_factors",
+      "group_label": "Other factors",
+      "factors": [
+        {
+          "factor_id": "downy_mildew",
+          "factor_label": "Downy mildew",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "numeric", "value": 2, "value_alt": null, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "numeric", "value": 10, "value_alt": null, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "splits",
+          "factor_label": "Splits",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 Canada": { "value_type": "numeric", "value": 10, "value_alt": null, "threshold_note": null },
+            "No. 2 Canada": { "value_type": "numeric", "value": 15, "value_alt": null, "threshold_note": null },
+            "No. 3 Canada": { "value_type": "numeric", "value": 20, "value_alt": null, "threshold_note": null },
+            "No. 4 Canada": { "value_type": "numeric", "value": 30, "value_alt": null, "threshold_note": null },
+            "No. 5 Canada": { "value_type": "numeric", "value": 40, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Soybeans, Sample Canada (colour) Account Splits"
+        }
+      ]
+    }
+  ],
+  "footnotes": {
+    "fnt1": "Soybeans of a variety not registered under the Seeds Act and listed in Appendix A to the annual Non-registered varieties order are permitted to be assigned a grade that is higher than the lowest grade established by regulation.",
+    "fnt2": "The tolerance for other colours is not applicable for Mixed soybeans"
+  }
+}

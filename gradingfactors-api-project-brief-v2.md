@@ -76,7 +76,7 @@ The following must be installed identically on both machines:
 
 - The Supabase database is the source of truth. The FastAPI layer reads from it. The scraper writes to it.
 - The API layer must **never** expose the raw Supabase auto-generated REST API to the public. All public access goes through FastAPI.
-- API versioning is implemented from day one: all routes are prefixed `/api/v1/`.
+- All routes are prefixed `/api/`. Schema versioning is handled via a `schema_version` field in all responses, not via URL prefixes.
 - The scraper is a **diff tool**, not an automated pipeline. It fetches CGC pages, compares to current DB state, outputs a human-readable diff report, and provides a one-command import after human review. It does not run on a schedule.
 
 ---
@@ -95,7 +95,7 @@ Every threshold has a `value_type` field. Valid values:
 |---|---|---|
 | `numeric` | A number; compare against this threshold | `0.04` |
 | `no_limit` | No maximum or minimum applies | `"No minimum"`, `"No limit"` |
-| `qualitative` | Descriptive text; not machine-comparable | Standard of quality descriptions; policy instructions like `"Considered as other cereal grains"` |
+| `qualitative` | Descriptive text; not machine-comparable | Standard of quality descriptions; policy instructions like `"Considered as other cereal grains"`. When a CGC table cell mixes prose and numbers, store as qualitative — the text is preserved and consumers can parse numbers if needed. |
 | `qualitative_judgment` | Text that replaces a numeric threshold at a specific grade | `"Consider overall appearance"` (CWAD smudge at No. 4) |
 | `not_applicable` | Factor genuinely does not apply at this grade level | Red Lentils Wrinkled factor at Extra No. 3 and No. 3 |
 
@@ -171,6 +171,7 @@ Every threshold has a `value_type` field. Valid values:
 
 ```json
 {
+  "schema_version": "1.0",
   "grain_id": "CWRS",
   "grain_name": "Canada Western Red Spring",
   "kind": "wheat",
@@ -187,7 +188,7 @@ Every threshold has a `value_type` field. Valid values:
     {
       "account": "mildew",
       "floor_grade": "No. 3 CWRS",
-      "note": "Samples graded no lower than No. 3 CWRS on account of mildew"
+      "note": "Samples of CWRS will be graded no lower than No. 3 CWRS on account of mildew"
     }
   ],
   "grades": ["No. 1 CWRS", "No. 2 CWRS", "No. 3 CWRS", "CW Feed"],
@@ -200,6 +201,7 @@ Every threshold has a `value_type` field. Valid values:
 ```
 
 Field notes:
+- `schema_version`: the version of the response schema. Increment on breaking changes only; additive changes do not require a version bump. Current value: `"1.0"`.
 - `region`: `"western"`, `"eastern"`, or `null` if not regionally split at the record level (e.g. Triticale, Canola)
 - `use_class`: `"malting"`, `"food"`, `"general_purpose"`, or `null`. Used for Barley.
 - `variety_tracks`: array of track objects when a table has parallel grade columns for different variety types. Used for Barley GP (Covered vs Hulless):
@@ -302,22 +304,22 @@ Implement in Supabase PostgreSQL. Supabase project name: `gradingfactors-api`. U
 
 Base URL: `https://api.gradingfactors.ca`
 
-All endpoints require `X-API-Key: {key}` header except `POST /api/v1/register`.
+All endpoints require `X-API-Key: {key}` header except `POST /api/register`.
 
-All responses are `application/json`. All errors follow:
+All responses are `application/json`. All responses include a top-level `schema_version` field. All errors follow:
 ```json
 { "error": "string describing the problem" }
 ```
 
-### `GET /api/v1/grains`
+### `GET /api/grains`
 
 Returns metadata for all grain classes in the database. Does not include factor data.
 
 **Response:**
 ```json
 {
+  "schema_version": "1.0",
   "count": 7,
-  "crop_year": "2025/26",
   "grains": [
     {
       "grain_id": "CWRS",
@@ -333,20 +335,79 @@ Returns metadata for all grain classes in the database. Does not include factor 
 }
 ```
 
-### `GET /api/v1/grains/{grain_id}`
+`count` is a computed field — the number of grain records in the response. It is not stored; it is calculated as `len(grains)` at response time.
+
+### `GET /api/grains/{grain_id}`
 
 Returns the complete record for a grain class including all factor groups, factors, and thresholds. This is the primary endpoint.
 
 `grain_id` is case-insensitive.
 
-**Response:** Full grain class record as defined in the data model above.
+**Response:** The full grain class record. The response includes all fields defined in the data model above. The following is a structurally complete but abbreviated example showing the nesting of `factor_groups` → `factors` → `thresholds`:
+
+```json
+{
+  "schema_version": "1.0",
+  "grain_id": "CWRS",
+  "grain_name": "Canada Western Red Spring",
+  "kind": "wheat",
+  "region": "western",
+  "use_class": null,
+  "variety_tracks": null,
+  "colour_modifier": false,
+  "size_modifier": false,
+  "source_url": "https://www.grainscanada.gc.ca/en/...",
+  "effective_crop_year": "2025/26",
+  "last_scraped": "2026-04-11T00:00:00Z",
+  "coverage_status": "complete",
+  "fallthrough_label": "Grade, if specs for CW Feed not met",
+  "grade_floor_rules": [
+    {
+      "account": "mildew",
+      "floor_grade": "No. 3 CWRS",
+      "note": "Samples of CWRS will be graded no lower than No. 3 CWRS on account of mildew"
+    }
+  ],
+  "grades": ["No. 1 CWRS", "No. 2 CWRS", "No. 3 CWRS", "CW Feed"],
+  "factor_groups": [
+    {
+      "group_id": "foreign_material",
+      "group_label": "Foreign material",
+      "factors": [
+        {
+          "factor_id": "ergot",
+          "factor_label": "Ergot",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.04, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 0.04, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 0.04, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 0.10, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CW Account Ergot"
+        }
+      ]
+    }
+  ],
+  "footnotes": {
+    "fnt1": "See Frost and Mildew for applicable standard"
+  }
+}
+```
+
+All factor groups and all factors are returned. The example above shows one factor group with one factor for brevity. A real CWRS response contains three factor groups and approximately 25 factors.
 
 **Error — grain not found:**
 ```json
-{ "error": "Grain class 'XYZ' not found. Call GET /api/v1/grains for available grain IDs." }
+{ "error": "Grain class 'XYZ' not found. Call GET /api/grains for available grain IDs." }
 ```
 
-### `GET /api/v1/changelog`
+### `GET /api/changelog`
 
 Returns changelog entries in reverse chronological order.
 
@@ -357,6 +418,7 @@ Returns changelog entries in reverse chronological order.
 **Response:**
 ```json
 {
+  "schema_version": "1.0",
   "count": 2,
   "entries": [
     {
@@ -371,7 +433,7 @@ Returns changelog entries in reverse chronological order.
 }
 ```
 
-### `POST /api/v1/register`
+### `POST /api/register`
 
 Issues an API key. No authentication required.
 
@@ -383,6 +445,7 @@ Issues an API key. No authentication required.
 **Response:**
 ```json
 {
+  "schema_version": "1.0",
   "api_key": "gf_live_xxxxxxxxxxxxxxxx",
   "email": "developer@example.com",
   "message": "Store this key securely — it will not be shown again."
@@ -416,6 +479,9 @@ gradingfactors-api/
 │   │   └── register.py
 │   └── db.py                # Supabase client singleton
 │
+├── docs/
+│   └── field-reference.md   # Field-level documentation for all schema fields
+│
 ├── scraper/
 │   ├── fetch.py             # HTTP fetch with rate limiting and retries
 │   ├── parse.py             # HTML → structured dict for each grain type
@@ -424,10 +490,19 @@ gradingfactors-api/
 │   └── import.py            # Write approved diff to DB
 │
 ├── data/
-│   ├── seed/
-│   │   └── v1_initial.json  # Hand-verified initial dataset for all 7 grains
-│   └── schema/
-│       └── grain_record.json # JSON Schema for validating grain records
+|   ├── seed/
+|   │   ├── grains/
+|   │   │   ├── CWRS.json
+|   │   │   ├── CWAD.json
+|   │   │   ├── CPSR.json
+|   │   │   ├── CANOLA.json
+|   │   │   ├── BARLEY_GP_CW.json
+|   │   │   ├── BARLEY_GP_CE.json
+|   │   │   ├── CORN_CW.json
+|   │   │   ├── CORN_CE.json
+|   │   │   └── SOYBEANS.json
+|   └── schema/
+|       └── grain_record.json
 │
 ├── scripts/
 │   ├── seed_db.py           # Load seed data into DB
@@ -463,7 +538,7 @@ This file must be created manually on each development machine. It is never comm
 Implement simple rate limiting in FastAPI middleware:
 - 100 requests per hour per API key
 - 429 response with `Retry-After` header when exceeded
-- No rate limit on `POST /api/v1/register`
+- No rate limit on `POST /api/register`
 
 ---
 
@@ -482,26 +557,28 @@ Execute strictly in phase order. Do not begin a phase until the previous phase i
 
 ### Phase 2: API key auth
 
-1. Implement `POST /api/v1/register` — validate email, generate `gf_live_` prefixed key, store SHA-256 hash, return key once
+1. Implement `POST /api/register` — validate email, generate `gf_live_` prefixed key, store SHA-256 hash, return key once
 2. Implement `api/dependencies.py` — `verify_api_key` dependency that hashes the incoming header value and checks against DB
-3. Apply the dependency to a test-only protected route `GET /api/v1/ping` returning `{"authenticated": true}`
+3. Apply the dependency to a test-only protected route `GET /api/ping` returning `{"authenticated": true}`
 4. **Confirm:** registration returns a key; authenticated request to `/ping` returns 200; unauthenticated request returns 401
 
 ### Phase 3: Seed data
 
-1. Build `data/seed/v1_initial.json` — an array of grain class records matching the schema exactly, one per v1 grain. **This file must be manually verified against the CGC website before import. Do not generate it programmatically.**
+1. Populate `data/seed/grains/` with one verified JSON file per grain class. Each file contains a single grain record matching the schema. Files are named by `grain_id` (e.g. CWRS.json). Do not generate these files programmatically — they are manually verified.
 2. Build `data/schema/grain_record.json` — a JSON Schema file for validating grain records
-3. Create `scripts/seed_db.py` — reads the JSON file, validates each record against the schema, writes to Supabase in order: `grain_classes` → `factor_groups` → `factors`
+3. Create `scripts/seed_db.py` — reads all JSON files from `data/seed/grains/`, validates each record against the schema, writes to Supabase in order: `grain_classes` → `factor_groups` → `factors`
 4. Run the seed script
 5. **Confirm:** all 7 grains are present in the Supabase dashboard with correct structure and factor data
 
 ### Phase 4: Core API endpoints
 
-1. Implement `GET /api/v1/grains` — query `grain_classes`, return metadata array
-2. Implement `GET /api/v1/grains/{grain_id}` — query full record with joined factor groups and factors, assemble response matching the grain class record schema. `grain_id` lookup is case-insensitive.
-3. Implement `GET /api/v1/changelog` — query changelog table with optional `grain_id` and `limit` filtering
-4. Apply rate limiting middleware (100 requests/hour per API key)
-5. **Confirm:** all three endpoints return correct data; rate limiting triggers at threshold; unknown `grain_id` returns correct error message
+1. Implement `GET /api/grains` — query `grain_classes`, return metadata array with `schema_version: "1.0"` and computed `count` field
+2. Implement `GET /api/grains/{grain_id}` — query full record with joined factor groups and factors, assemble response matching the grain class record schema including all factor groups and factors. `grain_id` lookup is case-insensitive.
+3. Implement `GET /api/changelog` — query changelog table with optional `grain_id` and `limit` filtering
+4. Ensure all responses include `schema_version: "1.0"` at the top level
+5. Apply rate limiting middleware (100 requests/hour per API key)
+6. Remove the test-only `GET /api/ping` route
+7. **Confirm:** all three endpoints return correct data including full factor group and factor nesting; rate limiting triggers at threshold; unknown `grain_id` returns correct error message
 
 ### Phase 5: Scraper
 
@@ -530,7 +607,8 @@ Execute strictly in phase order. Do not begin a phase until the previous phase i
 1. Add docstrings to all route handlers — FastAPI uses these to populate the auto-generated OpenAPI docs at `/docs`
 2. Write `README.md` covering: what the API is, what it is not, authentication, the three endpoints with full example requests and responses, the update model (how and when data changes), and how to register for a key
 3. Write `CHANGELOG.md` with the initial v1 entry
-4. **Confirm:** `/docs` renders accurate documentation; README is complete and accurate
+4. Ensure `docs/field-reference.md` is present and up to date
+5. **Confirm:** `/docs` renders accurate documentation; README is complete and accurate
 
 ---
 
@@ -541,10 +619,11 @@ Execute strictly in phase order. Do not begin a phase until the previous phase i
 - **No auto-scraping.** The scraper is a human-assisted diff/import tool. It does not run on a schedule and is not triggered by any automated process.
 - **Three public endpoints only.** No sub-endpoints, no filtering on the grains list, no partial responses.
 - **Rapeseed excluded from v1.** It will be added in a future version alongside other grains not in the initial scope.
-- **API versioning from day one.** All routes are `/api/v1/`. When a breaking schema change is required, a new `/api/v2/` prefix is created; v1 is not modified.
+- **No URL versioning.** Routes are `/api/grains/`, `/api/grains/{grain_id}`, `/api/changelog`, `/api/register`. Breaking changes are managed through `schema_version` in the response body and communicated via changelog and documentation. If a breaking schema change is ever required, `schema_version` is incremented and a changelog entry is created — there are no parallel versioned URL prefixes.
 - **Supabase service key is server-only.** It is never exposed in client-facing code, logs, or responses.
-- **Seed data is manually verified.** The initial dataset is a hand-verified JSON file, not a scraper output. Do not populate `v1_initial.json` programmatically.
+- **Seed data is manually verified.** The initial dataset is one hand-verified JSON file per grain class in `data/seed/grains/`. Do not generate or overwrite these files programmatically.
 - **Git is the sync layer between machines.** Commit and push after each working session; pull before starting on the other machine. Do not attempt to share a live dev environment across machines.
+- **Mixed qualitative/quantitative cells default to qualitative.** When a CGC table cell contains both prose and numbers, store as `value_type: "qualitative"` with the full text preserved. Consumers can parse numbers from the text if needed; information must not be lost by storing as numeric only.
 
 ---
 
@@ -554,7 +633,7 @@ Execute strictly in phase order. Do not begin a phase until the previous phase i
 - Confirm the plan for each phase before executing it
 - Keep changes surgical and scoped — do not touch files outside the stated task
 - Flag out-of-scope issues proactively, but distinguish "worth knowing" from "blocking"
-- Do not populate `data/seed/v1_initial.json` — this file contains manually verified data and must not be generated or overwritten programmatically
+- Do not generate or overwrite files in `data/seed/grains/` — these files contain manually verified data and must not be modified programmatically
 - The grain record schema is validated and locked — do not alter field names, types, or structure without flagging it first
 - When uncertain about a grading edge case, leave a `# TODO: verify against CGC source` comment rather than guessing
 - If something in this brief appears to conflict with itself, stop and flag it rather than resolving it independently

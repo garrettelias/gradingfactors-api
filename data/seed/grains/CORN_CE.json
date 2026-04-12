@@ -1,0 +1,208 @@
+{
+  "grain_id": "CORN_CE",
+  "grain_name": "Corn, Canada Eastern Yellow, White or Mixed",
+  "kind": "cereal",
+  "region": "eastern",
+  "use_class": null,
+  "variety_tracks": null,
+  "colour_modifier": true,
+  "size_modifier": false,
+  "source_url": "https://grainscanada.gc.ca/en/grain-quality/official-grain-grading-guide/17-corn/primary-export-grade-determination-tables.html",
+  "effective_crop_year": "2025/26",
+  "last_scraped": "2026-04-11T00:00:00Z",
+  "coverage_status": "complete",
+  "fallthrough_label": "Grade, if No. 5 specs not met",
+  "grade_floor_rules": [],
+  "grades": ["No. 1 CE", "No. 2 CE", "No. 3 CE", "No. 4 CE", "No. 5 CE"],
+  "factor_groups": [
+    {
+      "group_id": "standard_of_quality",
+      "group_label": "Standard of quality",
+      "factors": [
+        {
+          "factor_id": "degree_of_soundness",
+          "factor_label": "Degree of soundness",
+          "unit": null,
+          "unit_alt": null,
+          "threshold_direction": null,
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE": { "value_type": "qualitative", "value": "Cool and sweet, uniform size", "value_alt": null, "threshold_note": null },
+            "No. 2 CE": { "value_type": "qualitative", "value": "Cool and sweet", "value_alt": null, "threshold_note": null },
+            "No. 3 CE": { "value_type": "qualitative", "value": "Cool and sweet", "value_alt": null, "threshold_note": null },
+            "No. 4 CE": { "value_type": "qualitative", "value": "Cool and sweet", "value_alt": null, "threshold_note": null },
+            "No. 5 CE": { "value_type": "qualitative", "value": "May have a slight odour, not sour or musty", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "min_test_weight",
+          "factor_label": "Minimum test weight",
+          "unit": "kg/hL",
+          "unit_alt": "g/0.5L",
+          "threshold_direction": "minimum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE": { "value_type": "numeric", "value": 68, "value_alt": 343, "threshold_note": null },
+            "No. 2 CE": { "value_type": "numeric", "value": 66, "value_alt": 333, "threshold_note": null },
+            "No. 3 CE": { "value_type": "numeric", "value": 64, "value_alt": 322, "threshold_note": null },
+            "No. 4 CE": { "value_type": "numeric", "value": 62, "value_alt": 311, "threshold_note": null },
+            "No. 5 CE": { "value_type": "numeric", "value": 58, "value_alt": 291, "threshold_note": null }
+          },
+          "fallthrough": "Corn, Sample CE (class) Account Light Weight"
+        },
+        {
+          "factor_id": "variety",
+          "factor_label": "Variety",
+          "unit": null,
+          "unit_alt": null,
+          "threshold_direction": null,
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE": { "value_type": "qualitative", "value": "Any variety of corn", "value_alt": null, "threshold_note": null },
+            "No. 2 CE": { "value_type": "qualitative", "value": "Any variety of corn", "value_alt": null, "threshold_note": null },
+            "No. 3 CE": { "value_type": "qualitative", "value": "Any variety of corn", "value_alt": null, "threshold_note": null },
+            "No. 4 CE": { "value_type": "qualitative", "value": "Any variety of corn", "value_alt": null, "threshold_note": null },
+            "No. 5 CE": { "value_type": "qualitative", "value": "Any variety of corn", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "other_classes",
+          "factor_label": "Other classes",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "No. 2 CE": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "No. 3 CE": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "No. 4 CE": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "No. 5 CE": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Over 5%—Use all other grading criteria and grade as Corn (grade) Mixed"
+        }
+      ]
+    },
+    {
+      "group_id": "damage",
+      "group_label": "Damage",
+      "factors": [
+        {
+          "factor_id": "heated",
+          "factor_label": "Heated",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE": { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 2 CE": { "value_type": "numeric", "value": 0.2, "value_alt": null, "threshold_note": null },
+            "No. 3 CE": { "value_type": "numeric", "value": 0.5, "value_alt": null, "threshold_note": null },
+            "No. 4 CE": { "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null },
+            "No. 5 CE": { "value_type": "numeric", "value": 3.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Corn, Sample CE (class) Account Heated"
+        },
+        {
+          "factor_id": "total_damage",
+          "factor_label": "Total % Damage",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["heated"],
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE": { "value_type": "numeric", "value": 3, "value_alt": null, "threshold_note": null },
+            "No. 2 CE": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "No. 3 CE": { "value_type": "numeric", "value": 7, "value_alt": null, "threshold_note": null },
+            "No. 4 CE": { "value_type": "numeric", "value": 10, "value_alt": null, "threshold_note": null },
+            "No. 5 CE": { "value_type": "numeric", "value": 15, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Corn, Sample CE (class) Account Damaged"
+        }
+      ]
+    },
+    {
+      "group_id": "foreign_material",
+      "group_label": "Foreign material",
+      "factors": [
+        {
+          "factor_id": "excreta",
+          "factor_label": "Excreta",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE": { "value_type": "numeric", "value": 0.02, "value_alt": null, "threshold_note": null },
+            "No. 2 CE": { "value_type": "numeric", "value": 0.02, "value_alt": null, "threshold_note": null },
+            "No. 3 CE": { "value_type": "numeric", "value": 0.02, "value_alt": null, "threshold_note": null },
+            "No. 4 CE": { "value_type": "numeric", "value": 0.02, "value_alt": null, "threshold_note": null },
+            "No. 5 CE": { "value_type": "numeric", "value": 0.02, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Corn, Sample CE (class) Account Excreta"
+        },
+        {
+          "factor_id": "total_cracked_corn_and_foreign_material",
+          "factor_label": "Total % Cracked corn and foreign material",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["excreta"],
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CE": { "value_type": "numeric", "value": 2, "value_alt": null, "threshold_note": null },
+            "No. 2 CE": { "value_type": "numeric", "value": 3, "value_alt": null, "threshold_note": null },
+            "No. 3 CE": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "No. 4 CE": { "value_type": "numeric", "value": 7, "value_alt": null, "threshold_note": null },
+            "No. 5 CE": { "value_type": "numeric", "value": 12, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": [
+            { "condition": "<= 50%", "region": null, "grade": "Corn Sample CE (class) Account CCFM" },
+            { "condition": "> 50%",  "region": null, "grade": "sample Cracked Corn and Foreign Material" }
+          ]
+        },
+        {
+          "factor_id": "stones",
+          "factor_label": "Stones",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": "fnt1",
+          "thresholds": {
+            "No. 1 CE": { "value_type": "numeric", "value": 0.15, "value_alt": null, "threshold_note": null },
+            "No. 2 CE": { "value_type": "numeric", "value": 0.15, "value_alt": null, "threshold_note": null },
+            "No. 3 CE": { "value_type": "numeric", "value": 0.15, "value_alt": null, "threshold_note": null },
+            "No. 4 CE": { "value_type": "numeric", "value": 0.15, "value_alt": null, "threshold_note": null },
+            "No. 5 CE": { "value_type": "numeric", "value": 0.15, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": [
+            { "condition": "<= 2.5%", "region": null, "grade": "Corn, Sample CE (class) Account Stones" },
+            { "condition": "> 2.5%",  "region": null, "grade": "Corn, Sample Salvage" }
+          ]
+        }
+      ]
+    }
+  ],
+  "footnotes": {
+    "fnt1": "Stones are not included in Total cracked corn and foreign material"
+  }
+}

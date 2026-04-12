@@ -1,0 +1,597 @@
+{
+  "grain_id": "CWRS",
+  "grain_name": "Canada Western Red Spring",
+  "kind": "wheat",
+  "region": "western",
+  "use_class": null,
+  "variety_tracks": null,
+  "colour_modifier": false,
+  "size_modifier": false,
+  "source_url": "https://www.grainscanada.gc.ca/en/grain-quality/official-grain-grading-guide/04-wheat/primary-grade-determination/cwrs-wheat.html",
+  "effective_crop_year": "2025/26",
+  "last_scraped": "2026-04-11T00:00:00Z",
+  "coverage_status": "complete",
+  "fallthrough_label": "Grade, if specs for CW Feed not met",
+  "grade_floor_rules": [
+    {
+      "account": "mildew",
+      "floor_grade": "No. 3 CWRS",
+      "note": "Samples of CWRS will be graded no lower than No. 3 CWRS on account of mildew"
+    }
+  ],
+  "grades": ["No. 1 CWRS", "No. 2 CWRS", "No. 3 CWRS", "CW Feed"],
+  "factor_groups": [
+    {
+      "group_id": "standard_of_quality",
+      "group_label": "Standard of quality",
+      "factors": [
+        {
+          "factor_id": "degree_of_soundness",
+          "factor_label": "Degree of soundness",
+          "unit": null,
+          "unit_alt": null,
+          "threshold_direction": null,
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": "fnt1",
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "qualitative", "value": "Reasonably well matured, reasonably free from damaged kernels", "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "qualitative", "value": "Fairly well matured, may be moderately bleached or frost-damaged, reasonably free from severely damaged kernels", "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "qualitative", "value": "May be frost-damaged, immature or weather-damaged, moderately free from severely damaged kernels", "value_alt": null, "threshold_note": null },
+            "CW Feed": { "value_type": "qualitative", "value": "Reasonably sweet, excluded from other grades of wheat on account of damaged kernels", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "min_test_weight",
+          "factor_label": "Minimum test weight",
+          "unit": "kg/hL",
+          "unit_alt": "g/0.5L",
+          "threshold_direction": "minimum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 75, "value_alt": 365, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 72, "value_alt": 350, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 69, "value_alt": 335, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 65, "value_alt": 315, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CW Account Light Weight"
+        },
+        {
+          "factor_id": "min_hard_vitreous_kernels",
+          "factor_label": "Minimum hard vitreous kernels",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "minimum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 65, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "min_protein",
+          "factor_label": "Minimum protein",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "minimum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 10.0, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "variety",
+          "factor_label": "Variety",
+          "unit": null,
+          "unit_alt": null,
+          "threshold_direction": null,
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "qualitative", "value": "Any variety of the class CWRS designated as such by order of the Commission", "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "qualitative", "value": "Any variety of the class CWRS designated as such by order of the Commission", "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "qualitative", "value": "Any variety of the class CWRS designated as such by order of the Commission", "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "qualitative", "value": "Any class or variety of wheat excluding amber durum and CWSP", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        }
+      ]
+    },
+    {
+      "group_id": "foreign_material",
+      "group_label": "Foreign material",
+      "factors": [
+        {
+          "factor_id": "ergot",
+          "factor_label": "Ergot",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.04, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 0.04, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 0.04, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 0.10, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CW Account Ergot"
+        },
+        {
+          "factor_id": "excreta",
+          "factor_label": "Excreta",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.01, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 0.01, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 0.01, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 0.03, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CW Account Excreta"
+        },
+        {
+          "factor_id": "matter_other_than_cereal_grains",
+          "factor_label": "Matter other than cereal grains",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.2, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 0.3, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 0.5, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CW Account Admixture"
+        },
+        {
+          "factor_id": "sclerotinia",
+          "factor_label": "Sclerotinia",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.04, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 0.04, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 0.04, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 0.10, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CW Account Admixture"
+        },
+        {
+          "factor_id": "stones",
+          "factor_label": "Stones",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.03, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 0.03, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 0.06, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 0.10, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": [
+            { "condition": "<= 2.5%", "region": null, "grade": "Wheat, Rejected grade, Account Stones" },
+            { "condition": "> 2.5%",  "region": null,   "grade": "Wheat, Sample Salvage" }
+          ]
+        },
+        {
+          "factor_id": "total_foreign_material",
+          "factor_label": "Total % Foreign material",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["ergot", "excreta", "matter_other_than_cereal_grains", "sclerotinia", "stones"],
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.6, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 1.2, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 2.4, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 10.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "See Mixed grain"
+        }
+      ]
+    },
+    {
+      "group_id": "grading_factors",
+      "group_label": "Grading factors",
+      "factors": [
+        {
+          "factor_id": "artificial_stain_no_residue",
+          "factor_label": "Artificial stain, no residue",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.0, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 2.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CW Account Stained Kernels"
+        },
+        {
+          "factor_id": "binburnt_severely_mildewed_rotted_mouldy",
+          "factor_label": "Binburnt, severely mildewed, rotted, mouldy",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.01, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 0.02, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 0.03, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 2.50, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CW Account Heated"
+        },
+        {
+          "factor_id": "total_heated_binburnt_severely_mildewed_rotted_mouldy",
+          "factor_label": "Total % Heated, binburnt, severely mildewed, rotted, mouldy",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["binburnt_severely_mildewed_rotted_mouldy"],
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 0.4, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CW Account Heated"
+        },
+        {
+          "factor_id": "contrasting_classes",
+          "factor_label": "Contrasting classes",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.8, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 2.3, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 3.8, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "qualitative", "value": "10%, either alone or in combination with each other, of amber durum and any variety of the class CWSP", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Over 10%, either alone or in combination with each other, of amber durum and any variety of the class CWSP - Wheat, Sample CW Account Admixture"
+        },
+        {
+          "factor_id": "total_wheats_other_classes_varieties_contrasting",
+          "factor_label": "Total % Wheats of other classes or varieties and contrasting classes",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["contrasting_classes"],
+          "footnote_ref": "fnt2",
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 2.3, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 4.5, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 7.5, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "qualitative", "value": "10%, either alone or in combination with each other, of amber durum and any variety of the class CWSP", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Over 10%, either alone or in combination with each other, of amber durum and any variety of the class CWSP - Wheat, Sample CW Account Admixture"
+        },
+        {
+          "factor_id": "dark_immature",
+          "factor_label": "Dark immature",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 1, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 3, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 10, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "degermed",
+          "factor_label": "Degermed",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 4, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 7, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 13, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "fireburnt",
+          "factor_label": "Fireburnt",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.0, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 0.0, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 0.0, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 2.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CW Account Fireburnt"
+        },
+        {
+          "factor_id": "fusarium_damage",
+          "factor_label": "Fusarium damage",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.3, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 0.8, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 1.5, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 4.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": [
+            { "condition": "<= 10%", "region": null, "grade": "Wheat, Sample CW Account Fusarium Damage" },
+            { "condition": "> 10%",  "region": null, "grade": "Wheat, Commercial Salvage" }
+          ]
+        },
+        {
+          "factor_id": "grass_green",
+          "factor_label": "Grass green",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.8, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 2.0, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 10.0, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "insect_damage",
+          "factor_label": "Insect damage",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 1, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 3, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 6, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "natural_stain",
+          "factor_label": "Natural stain",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 1, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 2, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "pink",
+          "factor_label": "Pink",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 2, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 10, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "sawfly_midge",
+          "factor_label": "Sawfly, midge",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 2, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 10, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "shrunken",
+          "factor_label": "Shrunken",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 4, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 4, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 4, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "broken",
+          "factor_label": "Broken",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 5, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 6, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 7, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "numeric", "value": 13, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Sample Broken Grain"
+        },
+        {
+          "factor_id": "total_shrunken_and_broken",
+          "factor_label": "Total % Shrunken and broken",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["shrunken", "broken"],
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 7, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 8, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 9, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": "within broken tolerances" }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "smudge",
+          "factor_label": "Smudge",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.3, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 5.0, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "total_smudge_and_blackpoint",
+          "factor_label": "Total % Smudge and blackpoint",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["smudge"],
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 10, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 20, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 35, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "severely_sprouted",
+          "factor_label": "Severely sprouted",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 0.2, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 0.3, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "total_sprouted",
+          "factor_label": "Total % Sprouted",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["severely_sprouted"],
+          "footnote_ref": null,
+          "thresholds": {
+            "No. 1 CWRS": { "value_type": "numeric", "value": 0.5, "value_alt": null, "threshold_note": null },
+            "No. 2 CWRS": { "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null },
+            "No. 3 CWRS": { "value_type": "numeric", "value": 3.0, "value_alt": null, "threshold_note": null },
+            "CW Feed":    { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        }
+      ]
+    }
+  ],
+  "footnotes": {
+    "fnt1": "See Frost and Mildew for applicable standard",
+    "fnt2": "See working tolerance for Wheats of Other Classes or Varieties"
+  }
+}

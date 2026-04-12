@@ -8,7 +8,24 @@ All grain data is sourced from the Canadian Grain Commission's Official Grain Gr
 
 ## Grain record fields
 
-A grain record is the top-level object returned by `GET /api/v1/grains/{grain_id}`. It describes a single grain class and contains all grading factor data for that class.
+A grain record is the top-level object returned by `GET /api/grains/{grain_id}`. It describes a single grain class and contains all grading factor data for that class.
+
+---
+
+### `schema_version`
+
+**Type:** string  
+**Required:** yes
+
+The version of the response schema. Consumers should check this field when syncing to detect whether the response structure has changed in a way that requires updates to their integration.
+
+Additive changes — new optional fields — do not increment this value. Only breaking changes increment it: field renames, type changes, or structural reorganization.
+
+```json
+"schema_version": "1.0"
+```
+
+Current value: "1.0"
 
 ---
 
@@ -17,7 +34,7 @@ A grain record is the top-level object returned by `GET /api/v1/grains/{grain_id
 **Type:** string  
 **Required:** yes
 
-The unique identifier for this grain class. Used as the path parameter in `GET /api/v1/grains/{grain_id}`. Lookup is case-insensitive.
+The unique identifier for this grain class. Used as the path parameter in `GET /api/grains/{grain_id}`. Lookup is case-insensitive.
 
 ```json
 "grain_id": "CWRS"
@@ -186,7 +203,7 @@ The crop year for which this grade data is in effect. CGC crop years run August 
 "effective_crop_year": "2025/26"
 ```
 
-Check the [`/api/v1/changelog`](#) endpoint to determine whether data has been updated since you last synced.
+Check the [`/api/changelog`](#) endpoint to determine whether data has been updated since you last synced.
 
 ---
 
