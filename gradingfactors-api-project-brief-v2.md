@@ -18,8 +18,6 @@ The project is branded as **Grading Factors**, accessible at `gradingfactors.ca`
 
 ---
 
-## Scope
-
 ### V1 Grain Classes
 
 | grain_id | Full Name | Source Page |
@@ -28,11 +26,13 @@ The project is branded as **Grading Factors**, accessible at `gradingfactors.ca`
 | `CWAD` | Canada Western Amber Durum wheat | `/04-wheat/primary-grade-determination/cwad-wheat.html` |
 | `CPSR` | Canada Prairie Spring Red wheat | `/04-wheat/primary-grade-determination/cpsr-wheat.html` |
 | `CANOLA` | Canola, Canada (CAN) | `/10-canola-rapeseed/primary-export-grade-determination-tables.html` |
-| `BARLEY_GP` | Barley, Canada Western/Eastern General Purpose | `/06-barley/primary-export-grade-determination/general-purpose-barley.html` |
-| `CORN` | Corn, Canada Western/Eastern Yellow, White or Mixed | `/17-corn/primary-export-grade-determination-tables.html` |
+| `BARLEY_GP_CW` | Barley, Canada Western General Purpose | `/06-barley/primary-export-grade-determination/general-purpose-barley.html` |
+| `BARLEY_GP_CE` | Barley, Canada Eastern General Purpose | `/06-barley/primary-export-grade-determination/general-purpose-barley.html` |
+| `CORN_CW` | Corn, Canada Western Yellow, White or Mixed | `/17-corn/primary-export-grade-determination-tables.html` |
+| `CORN_CE` | Corn, Canada Eastern Yellow, White or Mixed | `/17-corn/primary-export-grade-determination-tables.html` |
 | `SOYBEANS` | Soybeans, Canada Yellow, Green, Brown, Black or Mixed | `/20-soybeans/primary-export-grade-determination-tables.html` |
 
-All source URLs are relative to `https://www.grainscanada.gc.ca/en/grain-quality/official-grain-grading-guide`.
+All source URLs are relative to `https://www.grainscanada.gc.ca/en/grain-quality/official-grain-grading-guide`. V1 contains 9 grain records total.
 
 **Effective crop year for all v1 data: 2025/26.**
 
@@ -313,13 +313,13 @@ All responses are `application/json`. All responses include a top-level `schema_
 
 ### `GET /api/grains`
 
-Returns metadata for all grain classes in the database. Does not include factor data.
+Returns metadata for all grain classes in the database. Does not include factor data. The following is a structurally complete but abbreviated example showing a single CWRS grain class.
 
 **Response:**
 ```json
 {
   "schema_version": "1.0",
-  "count": 7,
+  "count": 9,
   "grains": [
     {
       "grain_id": "CWRS",
