@@ -9,17 +9,17 @@ app = FastAPI(
     version="1.0.0",
 )
 
-v1 = APIRouter(prefix="/api/v1")
+api_router = APIRouter(prefix="/api")
 
-v1.include_router(register.router)
+api_router.include_router(register.router)
 
 
-@v1.get("/ping", include_in_schema=False)
+@api_router.get("/ping", include_in_schema=False)
 def ping(_key: str = Depends(verify_api_key)):
     return {"authenticated": True}
 
 
-app.include_router(v1)
+app.include_router(api_router)
 
 
 @app.get("/health", include_in_schema=False)
