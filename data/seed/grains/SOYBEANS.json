@@ -63,7 +63,7 @@
           "threshold_direction": null,
           "is_aggregate": false,
           "aggregates": null,
-          "footnote_ref": "fnt1",
+          "footnote_ref": "fnt1-1",
           "thresholds": {
             "No. 1 Canada": { "value_type": "qualitative", "value": "Any variety of soybeans registered under the Seeds Act", "value_alt": null, "threshold_note": null },
             "No. 2 Canada": { "value_type": "qualitative", "value": "Any variety of soybeans registered under the Seeds Act", "value_alt": null, "threshold_note": null },
@@ -81,7 +81,7 @@
           "threshold_direction": "maximum",
           "is_aggregate": false,
           "aggregates": null,
-          "footnote_ref": "fnt2",
+          "footnote_ref": "fnt1-2",
           "thresholds": {
             "No. 1 Canada": { "value_type": "numeric", "value": 2, "value_alt": null, "threshold_note": null },
             "No. 2 Canada": { "value_type": "numeric", "value": 3, "value_alt": null, "threshold_note": null },

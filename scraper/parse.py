@@ -146,13 +146,23 @@ def _extract_th_label(th) -> tuple[str, str | None]:
     """Return (clean_label, footnote_ref_or_None) from a factor <th> element."""
     th = th.__copy__()  # work on a copy so we can mutate
 
-    # Extract footnote ref from <sup> before getting text
+    # Extract footnote ref from <sup> before getting text.
+    # Prefer the fn-lnk href over the visible display number: CGC pages that
+    # contain multiple table sets (e.g. CW + CE on one page) use globally
+    # unique anchor IDs (fnt2, fnt1-1, …) while the display counter resets to
+    # "1" for every table — so the visible digit can be misleading.
     footnote_ref = None
     sup = th.find("sup")
     if sup:
-        m = re.search(r"(\d+)", sup.get_text())
-        if m:
-            footnote_ref = f"fnt{m.group(1)}"
+        fn_link = sup.find("a", class_="fn-lnk")
+        if fn_link:
+            href = fn_link.get("href", "").lstrip("#")
+            if href:
+                footnote_ref = href
+        if footnote_ref is None:
+            m = re.search(r"(\d+)", sup.get_text())
+            if m:
+                footnote_ref = f"fnt{m.group(1)}"
         sup.decompose()
 
     # Join text nodes (handles <br/> inside <th>)
