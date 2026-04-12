@@ -5,7 +5,7 @@ Seed the Grading Factors database with initial grain data.
 Usage (from project root):
     python scripts/seed_db.py
 
-Reads data/seed/v1_initial.json, validates every record against
+Reads all .json files from data/seed/grains/, validates every record against
 data/schema/grain_record.json, then writes to Supabase in dependency order:
   grain_classes -> factor_groups -> factors
 
@@ -24,7 +24,7 @@ sys.path.insert(0, str(ROOT))
 
 from api.db import supabase  # noqa: E402 — path must be set first
 
-SEED_FILE = ROOT / "data" / "seed" / "v1_initial.json"
+SEED_DIR = ROOT / "data" / "seed" / "grains"
 SCHEMA_FILE = ROOT / "data" / "schema" / "grain_record.json"
 
 
@@ -32,21 +32,25 @@ def load_and_validate() -> list[dict]:
     with open(SCHEMA_FILE) as f:
         schema = json.load(f)
 
-    with open(SEED_FILE) as f:
-        records = json.load(f)
-
-    if not isinstance(records, list):
-        print("ERROR: v1_initial.json must be a JSON array.")
+    if not SEED_DIR.is_dir():
+        print(f"ERROR: Seed directory not found: {SEED_DIR}")
         sys.exit(1)
 
-    if not records:
+    seed_files = sorted(SEED_DIR.glob("*.json"))
+
+    if not seed_files:
         print(
-            "ERROR: v1_initial.json is empty.\n"
-            "Populate it with verified grain records before running this script."
+            f"ERROR: No .json files found in {SEED_DIR}.\n"
+            "Add one verified grain record per file before running this script."
         )
         sys.exit(1)
 
-    print(f"Validating {len(records)} record(s)...")
+    records = []
+    for path in seed_files:
+        with open(path) as f:
+            records.append(json.load(f))
+
+    print(f"Validating {len(records)} record(s) from {SEED_DIR}...")
 
     errors = []
     for i, record in enumerate(records):
