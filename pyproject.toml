@@ -31,3 +31,6 @@ include = ["api*", "scraper*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
