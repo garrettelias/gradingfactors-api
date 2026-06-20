@@ -11,6 +11,12 @@ router = APIRouter()
 
 @router.post("/register", response_model=RegisterResponse)
 def register(body: RegisterRequest):
+    """
+    Generate a new API key linked to the provided email address.
+
+    The raw key is returned once and never stored — save it immediately.
+    Pass the key as the X-API-Key header on all other requests.
+    """
     api_key = "gf_live_" + secrets.token_hex(16)
     key_hash = hashlib.sha256(api_key.encode()).hexdigest()
 

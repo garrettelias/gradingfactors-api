@@ -13,6 +13,13 @@ def get_changelog(
     limit: int = Query(default=20, ge=1, le=100),
     _key: str = Depends(verify_api_key),
 ):
+    """
+    Return recent data changelog entries, newest first.
+
+    Filter by grain_id to see changes affecting a specific grain. Results are
+    ordered by effective_date DESC, then created_at DESC. Default limit is 20;
+    maximum is 100.
+    """
     query = (
         supabase.table("changelog")
         .select("*")

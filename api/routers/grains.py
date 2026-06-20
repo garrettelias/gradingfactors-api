@@ -16,6 +16,13 @@ router = APIRouter()
 
 @router.get("/grains", response_model=GrainsListResponse)
 def list_grains(_key: str = Depends(verify_api_key)):
+    """
+    Return a summary of all available grain classes.
+
+    Each item includes grain_id, grain_name, kind, region, use_class,
+    effective_crop_year, coverage_status, and the ordered grades array.
+    Factor data is not included — use GET /api/grains/{grain_id} for the full record.
+    """
     result = (
         supabase.table("grain_classes")
         .select(
@@ -30,6 +37,13 @@ def list_grains(_key: str = Depends(verify_api_key)):
 
 @router.get("/grains/{grain_id}")
 def get_grain(grain_id: str, _key: str = Depends(verify_api_key)):
+    """
+    Return the full grading factor table for a single grain class.
+
+    Includes all factor groups, factors with per-grade thresholds, grade floor
+    rules, footnotes, and grain metadata. grain_id is case-insensitive.
+    Returns 404 with a helpful message if the grain_id is not found.
+    """
     # Normalize to uppercase — all grain_ids in the DB are uppercase.
     # Using eq() rather than ilike() avoids LIKE wildcard issues with underscores
     # (e.g. BARLEY_GP contains a _ which is a LIKE wildcard character).
