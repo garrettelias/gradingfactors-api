@@ -1,8 +1,8 @@
-# Grading Factors API — Project Brief
+# Grading Factors API — Project Reference
 
 ## Purpose
 
-This document is the authoritative specification for building the Grading Factors API. It contains all decisions, constraints, schema definitions, endpoint specifications, and build instructions needed to execute the project from scratch. Do not deviate from decisions documented here without explicit instruction.
+This document is the authoritative reference for the Grading Factors project. It captures decisions, constraints, schema definitions, endpoint specifications, current build state, and open items. It is a living document — update it when decisions change or new conventions are established. Do not deviate from decisions documented here without explicit instruction.
 
 ---
 
@@ -14,7 +14,7 @@ The CGC publishes grade determinant data — the thresholds used to assign an of
 
 **This is a data service, not a grading calculator.** It does not accept sample measurements and return a grade. It serves the reference data that developers need to build such tools themselves. The mental model for consumers is: pull the full dataset periodically, store it locally, build against your own copy. The API is designed for sync, not live query.
 
-The project is branded as **Grading Factors**, accessible at `gradingfactors.ca`. The API lives at `api.gradingfactors.ca`. The apex domain is reserved for a future marketing or documentation page.
+The project is branded as **Grading Factors**. The API lives at `api.gradingfactors.ca`. The docs site lives at `gradingfactors.ca` (Starlight/Astro, deployed to Netlify).
 
 ---
 
@@ -45,32 +45,48 @@ All source URLs are relative to `https://www.grainscanada.gc.ca/en/grain-quality
 - All remaining grain types: Oats, Rye, Triticale, Peas, Lentils, Beans, Faba Beans, Chickpeas, Flaxseed, Mustard Seed, Sunflower Seed, Safflower Seed, Buckwheat, Canary Seed
 - Mixed Grain, Screenings, Experimental Grades, Sample Feed Grain (permanently excluded — no standard grade tables)
 - A grading calculator (separate project — do not conflate with this API)
-- A web UI for end users beyond API documentation
+- A web UI for end users beyond the docs site
 
 ---
 
 ## Tech Stack
 
+### API
+
 | Component | Choice | Rationale |
 |---|---|---|
 | Database | PostgreSQL via Supabase | Relational structure fits the data model; hosted; managed |
 | API layer | Python 3.11+ / FastAPI | Shares language with scraper; auto-generates OpenAPI docs |
-| Scraper | Python script in same repo | BeautifulSoup + httpx; runs manually on a trigger, not on a schedule |
-| Primary dev environment | WSL2 (Ubuntu) on Windows 10 desktop | Consistent Linux tooling; primary machine |
-| Secondary dev environment | M2 MacBook Air (macOS) | Secondary machine; same repo via Git |
+| Scraper | Python package in same repo | BeautifulSoup + httpx; runs manually on a trigger, not on a schedule |
 | Public hosting | Fly.io | Always-on free tier; no cold starts; simple CLI deployment |
 | Auth | API key via request header | `X-API-Key` header; keys stored in Supabase |
+| DNS | Cloudflare | DNS-only proxy for API subdomain; email routing for `contact@gradingfactors.ca` |
+| Email | Resend | SMTP relay for send-from `contact@gradingfactors.ca` |
 
-### Two-Machine Workflow
+### Docs Site
+
+| Component | Choice |
+|---|---|
+| Framework | Starlight (Astro) |
+| Hosting | Netlify |
+| Repo | `garrettelias/gradingfactors-web` (`main` branch) |
+| Local dev | `npm run dev` at `localhost:4321`; deploy via `git push origin main` |
+
+### Two-Repo Workflow
+
+The project spans two repositories:
+- `gradingfactors-api` — FastAPI app, scraper, seed data, tests
+- `gradingfactors-web` — Starlight docs site
 
 Git is the sync layer between machines. Work locally on whichever machine you are at, commit and push to GitHub, pull on the other machine when switching. Claude Code runs locally on each machine and operates on the current repo state.
 
-The following must be installed identically on both machines:
+The following must be installed on both machines:
 - Python 3.11+
-- Node.js
+- Node.js (via nvm, Node 22)
 - Claude Code (`npm install -g @anthropic/claude-code`)
-- Fly CLI
-- A local `.env` file with Supabase credentials — this never goes in the repo and must be created manually on each machine
+- Fly CLI (API repo only)
+- A local `.env` file with Supabase credentials in the API repo — this never goes in the repo and must be created manually on each machine
+- A local `.env` file in the web repo if needed
 
 ### Key Constraints
 
@@ -96,7 +112,7 @@ Every threshold has a `value_type` field. Valid values:
 | `numeric` | A number; compare against this threshold | `0.04` |
 | `no_limit` | No maximum or minimum applies | `"No minimum"`, `"No limit"` |
 | `qualitative` | Descriptive text; not machine-comparable | Standard of quality descriptions; policy instructions like `"Considered as other cereal grains"`. When a CGC table cell mixes prose and numbers, store as qualitative — the text is preserved and consumers can parse numbers if needed. |
-| `qualitative_judgment` | Text that replaces a numeric threshold at a specific grade | `"Consider overall appearance"` (CWAD smudge at No. 4) |
+| `qualitative_judgment` | Text that replaces a numeric threshold at a specific grade | `"Consider overall appearance"` (CWAD smudge at No. 4). Distinguished from `qualitative` by two-pass logic: a text value whose sibling thresholds for the same factor are numeric is `qualitative_judgment` only if the text itself contains no digits or percent signs. If the text contains digits or percent signs, store as `qualitative`. |
 | `not_applicable` | Factor genuinely does not apply at this grade level | Red Lentils Wrinkled factor at Extra No. 3 and No. 3 |
 
 #### Threshold Object
@@ -219,7 +235,7 @@ Field notes:
 
 ## Database Schema
 
-Implement in Supabase PostgreSQL. Supabase project name: `gradingfactors-api`. Use UUID primary keys throughout.
+Hosted in Supabase PostgreSQL. Use UUID primary keys throughout. RLS is enabled on all tables; no policies are needed since the service role key bypasses RLS.
 
 ### Tables
 
@@ -458,64 +474,81 @@ The key itself is never stored; only its SHA-256 hash is stored in the `api_keys
 
 ## Directory Structure
 
+### `gradingfactors-api`
+
 ```
 gradingfactors-api/
-├── README.md
+├── AGENTS.md                    # Points Claude Code to this brief
 ├── CHANGELOG.md
+├── LICENSE
+├── README.md
 ├── pyproject.toml
 ├── .env.example
 ├── .gitignore
 │
 ├── api/
-│   ├── main.py              # FastAPI app entry point
-│   ├── dependencies.py      # API key auth dependency
+│   ├── main.py                  # FastAPI app entry point
+│   ├── dependencies.py          # API key auth dependency
+│   ├── db.py                    # Supabase client singleton
 │   ├── routers/
-│   │   ├── grains.py        # /grains and /grains/{grain_id}
-│   │   ├── changelog.py     # /changelog
-│   │   └── register.py      # /register
-│   ├── models/
-│   │   ├── grain.py         # Pydantic response models
-│   │   ├── changelog.py
-│   │   └── register.py
-│   └── db.py                # Supabase client singleton
+│   │   ├── grains.py            # /grains and /grains/{grain_id}
+│   │   ├── changelog.py         # /changelog
+│   │   └── register.py          # /register
+│   └── models/
+│       ├── grain.py             # Pydantic response models
+│       ├── changelog.py
+│       └── register.py
 │
 ├── docs/
-│   └── field-reference.md   # Field-level documentation for all schema fields
+│   └── field-reference.md       # Field-level documentation for all schema fields
 │
 ├── scraper/
-│   ├── fetch.py             # HTTP fetch with rate limiting and retries
-│   ├── parse.py             # HTML → structured dict for each grain type
-│   ├── diff.py              # Compare fetched data against DB state
-│   ├── report.py            # Human-readable diff output to terminal
-│   └── import.py            # Write approved diff to DB
+│   ├── __init__.py
+│   ├── __main__.py              # Entry point: python -m scraper
+│   ├── fetch.py                 # HTTP fetch with rate limiting and retries
+│   ├── parse.py                 # HTML → structured dict for each grain type
+│   ├── diff.py                  # Compare fetched data against DB state
+│   ├── report.py                # Human-readable diff output to terminal
+│   └── import_diff.py           # Write approved diff to DB
 │
 ├── data/
-|   ├── seed/
-|   │   ├── grains/
-|   │   │   ├── CWRS.json
-|   │   │   ├── CWAD.json
-|   │   │   ├── CPSR.json
-|   │   │   ├── CANOLA.json
-|   │   │   ├── BARLEY_GP_CW.json
-|   │   │   ├── BARLEY_GP_CE.json
-|   │   │   ├── CORN_CW.json
-|   │   │   ├── CORN_CE.json
-|   │   │   └── SOYBEANS.json
-|   └── schema/
-|       └── grain_record.json
+│   ├── seed/
+│   │   └── grains/
+│   │       ├── CWRS.json
+│   │       ├── CWAD.json
+│   │       ├── CPSR.json
+│   │       ├── CANOLA.json
+│   │       ├── BARLEY_GP_CW.json
+│   │       ├── BARLEY_GP_CE.json
+│   │       ├── CORN_CW.json
+│   │       ├── CORN_CE.json
+│   │       └── SOYBEANS.json
+│   └── schema/
+│       └── grain_record.json
 │
 ├── scripts/
-│   ├── seed_db.py           # Load seed data into DB
-│   └── generate_api_key.py  # Admin script to generate keys outside registration
+│   ├── create_tables.sql        # DDL for Supabase schema setup
+│   └── seed_db.py               # Load seed data into DB
 │
-├── tests/
-│   ├── test_api.py
-│   ├── test_parser.py
-│   └── fixtures/
-│       └── cwrs_page.html   # Saved CGC page for offline parser testing
-│
-└── fly.toml                 # Fly.io deployment config
+└── tests/
+    ├── conftest.py
+    ├── test_api.py
+    ├── test_parser.py
+    └── fixtures/                # Saved CGC pages for offline parser testing
+        ├── cwrs_page.html
+        ├── cwad_page.html
+        ├── cpsr_page.html
+        ├── canola_page.html
+        ├── barley_gp_cw_page.html
+        ├── barley_gp_ce_page.html
+        ├── corn_cw_page.html
+        ├── corn_ce_page.html
+        └── soybeans_page.html
 ```
+
+### `gradingfactors-web`
+
+Starlight (Astro) docs site. Deployed automatically to Netlify on push to `main`. Local dev: `npm run dev` at `localhost:4321`. `.astro/` is gitignored — untrack it if it appears in a fresh clone (see M4 setup note above).
 
 ---
 
@@ -535,16 +568,79 @@ This file must be created manually on each development machine. It is never comm
 
 ## Rate Limiting
 
-Implement simple rate limiting in FastAPI middleware:
 - 100 requests per hour per API key
 - 429 response with `Retry-After` header when exceeded
 - No rate limit on `POST /api/register`
 
 ---
 
-## Phased Build Plan
+## Current State
 
-Execute strictly in phase order. Do not begin a phase until the previous phase is confirmed working. Confirm the plan for each phase before generating any code.
+V1 is complete and live as of mid-2026.
+
+- **API:** All endpoints live at `api.gradingfactors.ca`. All 9 grain classes seeded and validated (scraper produces zero diff against seed data). 15 API tests and 57 parser tests passing. Deployed to Fly.io with custom domain via Cloudflare.
+- **Docs site:** All pages live at `gradingfactors.ca`. Content authorship split: Overview, Update Model, Quickstart, About, and Landing pages are human-written; Authentication, Field Reference, and API Reference endpoint pages are AI-assisted.
+- **Database:** Supabase project under `contact@gradingfactors.ca`. Schema created via `scripts/create_tables.sql` and seeded via `scripts/seed_db.py`. RLS enabled on all tables.
+- **Dev tooling:** tmux 3-pane layout (Claude Code / working terminal / server terminal). Activate venv per session. `pyproject.toml` sets `pythonpath = ["."]`.
+
+---
+
+## Open Items
+
+### Low priority / cosmetic
+- One open GitHub Issue: fallthrough key ordering cosmetic bug (display only, no data impact)
+
+### CGC HTML bugs to report
+The following issues were found in CGC source HTML during the build and should be reported to the CGC:
+- `cleaniness` typo on the CANOLA page
+- Inconsistent footnote anchor IDs on barley and corn pages (cause of the `CORN_CE` `stones.footnote_ref: fnt2` deviation — see Key Decisions)
+- Missing space before `<abbr>` tags
+- Inconsistent dash usage in fallthrough cells (CGC uses a mix of hyphens and Unicode dashes)
+
+### Post-v1 backlog
+- Set up a dev environment: separate Supabase project and Fly.io dev app (deferred post-v1)
+- Add Rapeseed (shares source page with Canola; excluded from v1 by design)
+- Add remaining grain classes per future version planning
+
+---
+
+## Key Decisions — Do Not Revisit Without Instruction
+
+- **Primary stream only.** Export grade tables are not in scope.
+- **No grading calculator.** This API serves reference data only. Do not add logic that accepts sample measurements and returns a grade.
+- **No auto-scraping.** The scraper is a human-assisted diff/import tool. It does not run on a schedule and is not triggered by any automated process.
+- **Three public endpoints only.** No sub-endpoints, no filtering on the grains list, no partial responses.
+- **Rapeseed excluded from v1.** It will be added in a future version alongside other grains not in the initial scope.
+- **No URL versioning.** Routes are `/api/grains/`, `/api/grains/{grain_id}`, `/api/changelog`, `/api/register`. Breaking changes are managed through `schema_version` in the response body and communicated via changelog and documentation. If a breaking schema change is ever required, `schema_version` is incremented and a changelog entry is created — there are no parallel versioned URL prefixes.
+- **Supabase service key is server-only.** It is never exposed in client-facing code, logs, or responses.
+- **Seed files are the authority.** The files in `data/seed/grains/` are manually verified and represent the correct data. The parser must match seed file conventions, not the other way around. When there is a discrepancy between a parsed CGC page and a seed file, the seed file is correct unless Garrett explicitly decides otherwise. Seed files are never modified by Claude Code.
+- **Git is the sync layer between machines.** Commit and push after each working session; pull before starting on the other machine. Do not attempt to share a live dev environment across machines.
+- **Mixed qualitative/quantitative cells default to qualitative.** When a CGC table cell contains both prose and numbers, store as `value_type: "qualitative"` with the full text preserved. Consumers can parse numbers from the text if needed; information must not be lost by storing as numeric only.
+- **`qualitative_judgment` is determined by two-pass logic.** A threshold value is `qualitative_judgment` (not `qualitative`) only when: (1) sibling thresholds for the same factor at other grades are numeric, and (2) the text value itself contains no digits or percent signs. If the text contains digits or percent signs, store as `qualitative`.
+- **`stones` fallthrough uses `region: null` for western-only wheat classes.** There is no eastern production of these classes, so a regional split is not meaningful. Use `region: null` for the western-only condition object.
+- **Unicode dashes from CGC HTML are replaced with standard hyphens** throughout all seed data and parser output.
+- **Em dashes are avoided in all content output.** This applies to seed data, API responses, docs content, and parser-generated strings. Em dashes read as AI-generated.
+- **Known accepted deviation: `CORN_CE` `stones.footnote_ref` is `fnt2`.** The CGC HTML uses inconsistent footnote anchor IDs on the corn page. `fnt2` is correct for CORN_CE given the actual HTML; this is not a data error.
+
+---
+
+## Notes for Claude Code
+
+- Read this brief fully and confirm understanding before writing any code
+- Confirm the plan for each phase before executing it
+- Keep changes surgical and scoped — do not touch files outside the stated task
+- Flag out-of-scope issues proactively, but distinguish "worth knowing" from "blocking"
+- Do not generate or overwrite files in `data/seed/grains/` — these files contain manually verified data and must not be modified programmatically
+- The grain record schema is validated and locked — do not alter field names, types, or structure without flagging it first
+- When uncertain about a grading edge case, leave a `# TODO: verify against CGC source` comment rather than guessing
+- If something in this brief appears to conflict with itself, stop and flag it rather than resolving it independently
+- This project spans two repos (`gradingfactors-api` and `gradingfactors-web`). Do not conflate them. Do not modify web repo files from an API repo session and vice versa.
+
+---
+
+## Archived: Phased Build Plan
+
+The following was the original phased build plan. All phases are complete. Preserved here for reference.
 
 ### Phase 1: Project skeleton and database
 
@@ -568,7 +664,7 @@ Execute strictly in phase order. Do not begin a phase until the previous phase i
 2. Build `data/schema/grain_record.json` — a JSON Schema file for validating grain records
 3. Create `scripts/seed_db.py` — reads all JSON files from `data/seed/grains/`, validates each record against the schema, writes to Supabase in order: `grain_classes` → `factor_groups` → `factors`
 4. Run the seed script
-5. **Confirm:** all 7 grains are present in the Supabase dashboard with correct structure and factor data
+5. **Confirm:** all 9 grains are present in the Supabase dashboard with correct structure and factor data
 
 ### Phase 4: Core API endpoints
 
@@ -586,13 +682,13 @@ Execute strictly in phase order. Do not begin a phase until the previous phase i
 2. Implement `scraper/parse.py` — parses fetched HTML into a grain record dict matching the schema. Use CWRS as the reference implementation and confirm it matches the seeded data before building parsers for remaining grains.
 3. Implement `scraper/diff.py` — compares parsed dict against current DB state, produces a structured diff
 4. Implement `scraper/report.py` — prints diff to terminal in readable format: what changed, what was added, what was removed
-5. Implement `scraper/import.py` — writes an approved diff to DB and creates a changelog entry
+5. Implement `scraper/import_diff.py` — writes an approved diff to DB and creates a changelog entry
 6. **Confirm:** running the scraper against the live CWRS page produces a diff of zero changes (data matches seeded state)
 
 ### Phase 6: Tests
 
 1. Write pytest tests for all three API endpoints: happy path, missing grain, invalid API key, rate limit
-2. Write pytest tests for the parser using the saved CWRS fixture HTML at `tests/fixtures/cwrs_page.html`
+2. Write pytest tests for the parser using the saved fixture HTML files in `tests/fixtures/`
 3. **Confirm:** all tests pass
 
 ### Phase 7: Fly.io deployment
@@ -608,32 +704,5 @@ Execute strictly in phase order. Do not begin a phase until the previous phase i
 2. Write `README.md` covering: what the API is, what it is not, authentication, the three endpoints with full example requests and responses, the update model (how and when data changes), and how to register for a key
 3. Write `CHANGELOG.md` with the initial v1 entry
 4. Ensure `docs/field-reference.md` is present and up to date
-5. **Confirm:** `/docs` renders accurate documentation; README is complete and accurate
-
----
-
-## Key Decisions — Do Not Revisit Without Instruction
-
-- **Primary stream only.** Export grade tables are not in scope.
-- **No grading calculator.** This API serves reference data only. Do not add logic that accepts sample measurements and returns a grade.
-- **No auto-scraping.** The scraper is a human-assisted diff/import tool. It does not run on a schedule and is not triggered by any automated process.
-- **Three public endpoints only.** No sub-endpoints, no filtering on the grains list, no partial responses.
-- **Rapeseed excluded from v1.** It will be added in a future version alongside other grains not in the initial scope.
-- **No URL versioning.** Routes are `/api/grains/`, `/api/grains/{grain_id}`, `/api/changelog`, `/api/register`. Breaking changes are managed through `schema_version` in the response body and communicated via changelog and documentation. If a breaking schema change is ever required, `schema_version` is incremented and a changelog entry is created — there are no parallel versioned URL prefixes.
-- **Supabase service key is server-only.** It is never exposed in client-facing code, logs, or responses.
-- **Seed data is manually verified.** The initial dataset is one hand-verified JSON file per grain class in `data/seed/grains/`. Do not generate or overwrite these files programmatically.
-- **Git is the sync layer between machines.** Commit and push after each working session; pull before starting on the other machine. Do not attempt to share a live dev environment across machines.
-- **Mixed qualitative/quantitative cells default to qualitative.** When a CGC table cell contains both prose and numbers, store as `value_type: "qualitative"` with the full text preserved. Consumers can parse numbers from the text if needed; information must not be lost by storing as numeric only.
-
----
-
-## Notes for Claude Code
-
-- Read this brief fully and confirm understanding before writing any code
-- Confirm the plan for each phase before executing it
-- Keep changes surgical and scoped — do not touch files outside the stated task
-- Flag out-of-scope issues proactively, but distinguish "worth knowing" from "blocking"
-- Do not generate or overwrite files in `data/seed/grains/` — these files contain manually verified data and must not be modified programmatically
-- The grain record schema is validated and locked — do not alter field names, types, or structure without flagging it first
-- When uncertain about a grading edge case, leave a `# TODO: verify against CGC source` comment rather than guessing
-- If something in this brief appears to conflict with itself, stop and flag it rather than resolving it independently
+5. Build the Starlight docs site (`gradingfactors-web`) with all content pages
+6. **Confirm:** `/docs` renders accurate documentation; README is complete and accurate; docs site live at `gradingfactors.ca`
