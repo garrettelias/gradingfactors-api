@@ -62,6 +62,6 @@ api_router.include_router(changelog.router)
 app.include_router(api_router)
 
 
-@app.get("/health", include_in_schema=False)
+@app.api_route("/health", methods=["GET", "HEAD"], include_in_schema=False)
 def health_check():
     return {"status": "ok"}
