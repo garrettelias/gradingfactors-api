@@ -58,7 +58,7 @@ All source URLs are relative to `https://www.grainscanada.gc.ca/en/grain-quality
 | Database | PostgreSQL via Supabase | Relational structure fits the data model; hosted; managed |
 | API layer | Python 3.11+ / FastAPI | Shares language with scraper; auto-generates OpenAPI docs |
 | Scraper | Python package in same repo | BeautifulSoup + httpx; runs manually on a trigger, not on a schedule |
-| Public hosting | Fly.io | Always-on free tier; no cold starts; simple CLI deployment |
+| Public hosting | Fly.io | Under free billing threshold ($5/month minimum); suspends on idle, wakes in seconds on request; simple CLI deployment |
 | Auth | API key via request header | `X-API-Key` header; keys stored in Supabase |
 | DNS | Cloudflare | DNS-only proxy for API subdomain; email routing for `contact@gradingfactors.ca` |
 | Email | Resend | SMTP relay for send-from `contact@gradingfactors.ca` |

@@ -138,9 +138,8 @@ def main():
     args = parser.parse_args()
 
     if args.all:
-        for gid in GRAIN_CONFIG:
-            _run_grain(gid, do_import=False)
-        return
+        results = [_run_grain(gid, do_import=False) for gid in GRAIN_CONFIG]
+        sys.exit(1 if any(results) else 0)
 
     if not args.grain_id:
         parser.print_help()

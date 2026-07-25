@@ -1,0 +1,52 @@
+name: CGC Grading Data Check
+
+on:
+  schedule:
+    - cron: '0 3 * * 6'  # 9 PM CDT Friday (3 AM UTC Saturday); shifts to 10 PM CST in winter
+  workflow_dispatch:      # allow manual trigger for testing
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      CGC_BASE_URL: https://www.grainscanada.gc.ca/en/grain-quality/official-grain-grading-guide
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install --quiet .
+
+      - name: Run CGC scraper check
+        id: scraper
+        run: python -m scraper --all 2>&1 | tee scraper_output.txt
+        continue-on-error: true
+
+      - name: Open issue if changes detected
+        if: steps.scraper.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('scraper_output.txt', 'utf8');
+            const today = new Date().toISOString().split('T')[0];
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `CGC data change detected ${today}`,
+              body: [
+                'The weekly CGC check found changes in one or more grading tables.',
+                'Review the diff below, then run the scraper locally with `--import` to apply changes.',
+                '',
+                '```',
+                output,
+                '```',
+              ].join('\n')
+            });
