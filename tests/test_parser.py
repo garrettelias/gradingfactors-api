@@ -240,3 +240,66 @@ class TestParserEdgeCases:
             for t in f["thresholds"].values()
         )
         assert found, "Expected at least one qualitative_judgment threshold in CWAD"
+
+
+# ---------------------------------------------------------------------------
+# Aggregate resolution — exact-value coverage for each branch of the
+# aggregation heuristic in _parse_table (border-bottom named match, the
+# last_factor_id chain fallback, and the full-buffer sweep). These pin down
+# manually-verified seed values so a future change to that heuristic can't
+# silently narrow or widen an `aggregates` list without a test noticing.
+# ---------------------------------------------------------------------------
+
+class TestAggregateResolution:
+    def test_soybeans_full_sweep_multi_item_no_named_match(self):
+        """Full-sweep branch, buffer has multiple items and none share a label
+        word with 'Foreign material' — must fall back to the whole buffer.
+        This is the exact shape that regressed during development of the wheat
+        aggregation fix: 'foreign_material_other_than_grain' coincidentally
+        shares tokens with the total's label and must NOT be matched alone."""
+        record = parse("SOYBEANS", _load_fixture("SOYBEANS"))
+        total = _find_factor(record, "total_foreign_material")
+        assert total is not None
+        assert total["aggregates"] == [
+            "ergot", "excreta", "foreign_material_other_than_grain", "stones",
+        ]
+
+    def test_cwad_full_sweep_named_match_narrows_buffer(self):
+        """Full-sweep branch, buffer has multiple items and named-matching
+        correctly narrows to just the ones the label names."""
+        record = parse("CWAD", _load_fixture("CWAD"))
+        total = _find_factor(record, "total_shrunken_and_broken")
+        assert total is not None
+        assert total["aggregates"] == ["shrunken", "broken"]
+
+    def test_barley_gp_cw_border_bottom_named_subset(self):
+        """Border-bottom branch: label names one item ('stones') out of a
+        larger accumulated buffer."""
+        record = parse("BARLEY_GP_CW", _load_fixture("BARLEY_GP_CW"))
+        total = _find_factor(record, "total_mineral_matter_including_stones")
+        assert total is not None
+        assert total["aggregates"] == ["stones"]
+
+    def test_barley_gp_cw_full_sweep_after_border_bottom_carry(self):
+        """Full-sweep branch where the buffer was left open by a preceding
+        border-bottom row and grew further afterward (wild_oats appended) —
+        the eventual total must include the full accumulated history,
+        including the item the border-bottom row already named separately."""
+        record = parse("BARLEY_GP_CW", _load_fixture("BARLEY_GP_CW"))
+        total = _find_factor(record, "total_foreign_material")
+        assert total is not None
+        assert total["aggregates"] == [
+            "ergot", "excreta", "inseparable_seeds", "other_cereal_grains",
+            "sclerotinia", "stones", "wild_oats",
+        ]
+
+    def test_cwad_last_factor_id_chain_fallback(self):
+        """Chain-of-totals branch: buffer is empty (already cleared by the
+        immediately preceding active row), so this total aliases that
+        preceding total by factor_id rather than any base factor — 'blackpoint'
+        shares no token with 'total_smudge' at all, which is exactly why this
+        branch must not attempt label-word matching."""
+        record = parse("CWAD", _load_fixture("CWAD"))
+        total = _find_factor(record, "total_smudge_and_blackpoint")
+        assert total is not None
+        assert total["aggregates"] == ["total_smudge"]

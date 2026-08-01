@@ -629,6 +629,14 @@ The following issues were found in CGC source HTML during the build and should b
 
 ---
 
+## Key Learnings & Principles
+
+Concrete lessons from past sessions, kept here so they don't have to be re-discovered.
+
+- **Parser aggregation buffers are table-scoped, not page-scoped.** `_parse_table()`'s tracking state (`current_sub_group`, `all_base_factor_ids`, etc.) is local to a single call, and `_assemble()` calls it once per `<table>` element. A grand-total row can only aggregate what's been seen since that specific table began — it cannot reach back into an earlier table on the same page. A wrapper that changes which tables feed a factor group (e.g. CWRW's 4-table page vs. the standard 3) changes this scope directly, and is the kind of structural difference to check for before assuming a new grain page fits the shared wrapper.
+- **Label-word matching in the aggregation heuristic is branch-specific, not universal.** It's only safe where a buffer of candidate factor_ids is being narrowed to a subset (the border-bottom branch and the full-sweep branch). The chain-of-totals fallback (`aggregates = [last_factor_id]` when the buffer is empty) must not attempt label matching — a total can legitimately alias a preceding total whose factor_id shares zero words with the new total's own label (e.g. CWAD's `total_smudge_and_blackpoint` <- `total_smudge`, where "blackpoint" appears nowhere in the child factor_id). Applying the same matching rule to that branch would silently break a live, seeded grain.
+- **A passing test suite is not evidence of "no regression" if the changed field isn't asserted anywhere.** The parser suite had zero assertions on `aggregates` values before the wheat-family work — "72 passed" was true both before and after a real regression was introduced (SOYBEANS' `total_foreign_material` silently narrowed from 4 items to 1). Any change to shared parsing logic needs a full-record diff (every factor, every field) across every already-validated grain, not just a green test run — and whatever gap that diff exposes should get an exact-value test added before moving on.
+
 ## Notes for Claude Code
 
 - Read this brief fully and confirm understanding before writing any code

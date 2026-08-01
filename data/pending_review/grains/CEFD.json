@@ -1,0 +1,433 @@
+{
+  "grain_id": "CEFD",
+  "grain_name": "Canada Eastern Feed",
+  "kind": "wheat",
+  "region": "eastern",
+  "use_class": null,
+  "variety_tracks": null,
+  "colour_modifier": false,
+  "size_modifier": false,
+  "source_url": "https://www.grainscanada.gc.ca/en/grain-quality/official-grain-grading-guide/04-wheat/primary-grade-determination/cefd-wheat.html",
+  "effective_crop_year": "2025/26",
+  "last_scraped": "2026-08-01T20:47:06Z",
+  "coverage_status": "complete",
+  "fallthrough_label": "Grade, if specs for CE Feed not met",
+  "grade_floor_rules": [],
+  "grades": ["CE Feed"],
+  "factor_groups": [
+    {
+      "group_id": "standard_of_quality",
+      "group_label": "Standard of quality",
+      "factors": [
+        {
+          "factor_id": "degree_of_soundness",
+          "factor_label": "Degree of soundness",
+          "unit": null,
+          "unit_alt": null,
+          "threshold_direction": null,
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "qualitative", "value": "Reasonably sweet, may be immature or weather damaged", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "minimum_test_weight",
+          "factor_label": "Minimum test weight",
+          "unit": "kg/hL",
+          "unit_alt": "g/0.5 L",
+          "threshold_direction": "minimum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 65.0, "value_alt": 315.0, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CE Account Light Weight"
+        },
+        {
+          "factor_id": "variety",
+          "factor_label": "Variety",
+          "unit": null,
+          "unit_alt": null,
+          "threshold_direction": null,
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "qualitative", "value": "Any class or variety of wheat excluding amber durum", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        }
+      ]
+    },
+    {
+      "group_id": "foreign_material",
+      "group_label": "Foreign material",
+      "factors": [
+        {
+          "factor_id": "ergot",
+          "factor_label": "Ergot",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CE Account Ergot"
+        },
+        {
+          "factor_id": "excreta",
+          "factor_label": "Excreta",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 0.03, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CE Account Excreta"
+        },
+        {
+          "factor_id": "matter_other_than_cereal_grains",
+          "factor_label": "Matter other than cereal grains",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 1.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CE Account Admixture"
+        },
+        {
+          "factor_id": "sclerotinia",
+          "factor_label": "Sclerotinia",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 0.25, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CE Account Admixture"
+        },
+        {
+          "factor_id": "stones",
+          "factor_label": "Stones",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 0.1, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": [
+            { "condition": "<= 2.5%", "region": null, "grade": "Wheat, Sample CE Account Stones" },
+            { "condition": "> 2.5%", "region": null, "grade": "Wheat, Sample Salvage" }
+          ]
+        },
+        {
+          "factor_id": "total_foreign_material",
+          "factor_label": "Total % Foreign material",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["ergot", "excreta", "matter_other_than_cereal_grains", "sclerotinia", "stones"],
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 10.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "See Mixed grain"
+        }
+      ]
+    },
+    {
+      "group_id": "grading_factors",
+      "group_label": "Grading factors",
+      "factors": [
+        {
+          "factor_id": "artificial_stain_no_residue",
+          "factor_label": "Artificial stain, no residue",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 2.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CE Account Stained Kernels"
+        },
+        {
+          "factor_id": "binburnt_severely_mildewed_rotted_mouldy",
+          "factor_label": "Binburnt, severely mildewed, rotted, mouldy",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CE Account Heated"
+        },
+        {
+          "factor_id": "total_heated_binburnt_severely_mildewed_rotted_mouldy",
+          "factor_label": "Total % Heated, binburnt, severely mildewed, rotted, mouldy",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["binburnt_severely_mildewed_rotted_mouldy"],
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 2.5, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CE Account Heated"
+        },
+        {
+          "factor_id": "contrasting_classes",
+          "factor_label": "Contrasting classes",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": null,
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "qualitative", "value": "10% or less, either alone or in combination with each other, of amber durum and any variety of the class CEOW", "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Over 10%, either alone or in combination with each other, of amber durum and any variety of the class CEOW - Sample CE Account Admixture"
+        },
+        {
+          "factor_id": "dark_immature",
+          "factor_label": "Dark immature",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "degermed",
+          "factor_label": "Degermed",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "fireburnt",
+          "factor_label": "Fireburnt",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 2.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CE Account Fireburnt"
+        },
+        {
+          "factor_id": "fusarium_damage",
+          "factor_label": "Fusarium damage",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 5.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Wheat, Sample CE Account Fusarium Damage"
+        },
+        {
+          "factor_id": "grass_green",
+          "factor_label": "Grass green",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "insect_damage",
+          "factor_label": "Insect damage",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "natural_stain",
+          "factor_label": "Natural stain",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "pink",
+          "factor_label": "Pink",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "sawfly_midge",
+          "factor_label": "Sawfly, midge",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "shrunken",
+          "factor_label": "Shrunken",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "broken",
+          "factor_label": "Broken",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "numeric", "value": 50.0, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": "Sample Broken Grain"
+        },
+        {
+          "factor_id": "total_shrunken_and_broken",
+          "factor_label": "Total % Shrunken and broken",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["shrunken", "broken"],
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": "within broken tolerances" }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "smudge",
+          "factor_label": "Smudge",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "total_smudge_and_blackpoint",
+          "factor_label": "Total % Smudge and blackpoint",
+          "unit": "%",
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": true,
+          "aggregates": ["smudge"],
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        },
+        {
+          "factor_id": "sprouted",
+          "factor_label": "Sprouted",
+          "unit": null,
+          "unit_alt": null,
+          "threshold_direction": "maximum",
+          "is_aggregate": false,
+          "aggregates": null,
+          "footnote_ref": null,
+          "thresholds": {
+            "CE Feed": { "value_type": "no_limit", "value": null, "value_alt": null, "threshold_note": null }
+          },
+          "fallthrough": null
+        }
+      ]
+    }
+  ],
+  "footnotes": null
+}

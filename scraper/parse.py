@@ -71,6 +71,149 @@ GRAIN_CONFIG: dict[str, dict] = {
         "size_modifier": False,
         "parser": "wheat",
     },
+    "CWHWS": {
+        "url": "/04-wheat/primary-grade-determination/cwhws-wheat.html",
+        "grain_name": "Canada Western Hard White Spring",
+        "kind": "wheat",
+        "region": "western",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
+    "CWRW": {
+        "url": "/04-wheat/primary-grade-determination/cwrw-wheat.html",
+        "grain_name": "Canada Western Red Winter",
+        "kind": "wheat",
+        "region": "western",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        # CWRW's source page has 4 grade tables, not the standard 3 — an extra
+        # "grading factors included in total damage" table — so it uses its own
+        # wrapper (table slice(0, 4)) instead of the shared _parse_wheat.
+        "parser": "cwrw",
+    },
+    "CWSWS": {
+        "url": "/04-wheat/primary-grade-determination/cwsws-wheat.html",
+        "grain_name": "Canada Western Soft White Spring",
+        "kind": "wheat",
+        "region": "western",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
+    "CWES": {
+        "url": "/04-wheat/primary-grade-determination/cwes-wheat.html",
+        "grain_name": "Canada Western Extra Strong",
+        "kind": "wheat",
+        "region": "western",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
+    "CPSW": {
+        "url": "/04-wheat/primary-grade-determination/cpsw-wheat.html",
+        "grain_name": "Canada Prairie Spring White",
+        "kind": "wheat",
+        "region": "western",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
+    "CNHR": {
+        "url": "/04-wheat/primary-grade-determination/cnhr-wheat.html",
+        "grain_name": "Canada Northern Hard Red",
+        "kind": "wheat",
+        "region": "western",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
+    "CWSP": {
+        "url": "/04-wheat/primary-grade-determination/cwsp-wheat.html",
+        "grain_name": "Canada Western Special Purpose",
+        "kind": "wheat",
+        "region": "western",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
+    "CERS": {
+        "url": "/04-wheat/primary-grade-determination/cers-wheat.html",
+        "grain_name": "Canada Eastern Red Spring",
+        "kind": "wheat",
+        "region": "eastern",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
+    "CEHRW": {
+        "url": "/04-wheat/primary-grade-determination/cehrw-wheat.html",
+        "grain_name": "Canada Eastern Hard Red Winter",
+        "kind": "wheat",
+        "region": "eastern",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
+    "CESRW": {
+        "url": "/04-wheat/primary-grade-determination/cesrw-wheat.html",
+        "grain_name": "Canada Eastern Soft Red Winter",
+        "kind": "wheat",
+        "region": "eastern",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
+    "CEAD": {
+        "url": "/04-wheat/primary-grade-determination/cead-wheat.html",
+        "grain_name": "Canada Eastern Amber Durum",
+        "kind": "wheat",
+        "region": "eastern",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
+    "CEWW": {
+        "url": "/04-wheat/primary-grade-determination/ceww-wheat.html",
+        "grain_name": "Canada Eastern White Winter",
+        "kind": "wheat",
+        "region": "eastern",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
+    "CEOW": {
+        "url": "/04-wheat/primary-grade-determination/ceow-wheat.html",
+        "grain_name": "Canada Eastern Other Wheat",
+        "kind": "wheat",
+        "region": "eastern",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
+    "CEFD": {
+        "url": "/04-wheat/primary-grade-determination/cefd-wheat.html",
+        "grain_name": "Canada Eastern Feed",
+        "kind": "wheat",
+        "region": "eastern",
+        "use_class": None,
+        "colour_modifier": False,
+        "size_modifier": False,
+        "parser": "wheat",
+    },
     "CANOLA": {
         "url": "/10-canola-rapeseed/primary-export-grade-determination-tables.html",
         "grain_name": "Canola, Canada (CAN)",
@@ -380,6 +523,36 @@ def _extract_footnotes(table) -> dict[str, str]:
 # Table parser
 # ---------------------------------------------------------------------------
 
+_AGGREGATE_STOPWORDS = {"", "and", "or", "the", "of", "in", "with", "including"}
+
+
+def _label_words(factor_label: str) -> set[str]:
+    """Extract meaningful words from a 'Total %' factor label for aggregate matching."""
+    label_lower = factor_label.lower().replace("total %", "").strip()
+    return {w for w in re.split(r"[^a-z]+", label_lower) if w not in _AGGREGATE_STOPWORDS}
+
+
+def _named_match(candidates: list[str], label_words: set[str]) -> list[str]:
+    """Return the subset of candidate factor_ids that this total's label refers to.
+
+    A candidate matches if its own tokens (split on "_") are a subset of the
+    label's words, e.g. "severe_midge" <- "severe midge and penetrated smudge",
+    where the label names several factors together.
+
+    Deliberately one-directional: matching the other way (label's words a
+    subset of the candidate's tokens, to catch an abbreviated total label like
+    "Sprouted" <- "severely_sprouted") was tried and produces false positives —
+    e.g. SOYBEANS "Total % Foreign material" <- "foreign_material_other_than_grain"
+    would wrongly match on shared "foreign"/"material" tokens alone, even though
+    that factor is a distinct, narrower item, not what the total refers to. The
+    abbreviated-label case doesn't need that direction anyway: when a total's
+    buffer holds only the one relevant item (the common case for this pattern),
+    the empty-match fallback to the full buffer already returns the right answer.
+    Order is preserved from `candidates`.
+    """
+    return [fid for fid in candidates if set(fid.split("_")) <= label_words]
+
+
 def _caption_to_group(caption_text: str) -> tuple[str, str]:
     """Map table caption text to (group_id, group_label).
 
@@ -430,8 +603,22 @@ def _parse_table(table) -> tuple[list[str], str, list[dict], dict[str, str]]:
     # last_factor_id is a fallback for consecutive active rows: when the buffer is
     # empty because the immediately preceding row was itself active, the current
     # active row aggregates [last_factor_id] rather than returning null.
+    # all_base_factor_ids accumulates every non-aggregate factor_id seen anywhere
+    # in *this table* (never reset by border-top), for the stale-buffer fallback
+    # below. Scoped to this single _parse_table() call/table, same as the buffers
+    # above.
+    # buffer_touched_since_active tracks whether current_sub_group has received
+    # any new content (append or border-top reset) since the last active row read
+    # it. A non-border-bottom active row that finds this False means it directly
+    # follows another active row with nothing in between — current_sub_group is a
+    # stale leftover from an already-closed group, not fresh input for this row
+    # (e.g. CWRW "Total % Damage" following "Total % Sprouted" with no rows
+    # between them). In that case the row is a grand total spanning the whole
+    # table rather than a subset of the most recent sub-group.
     current_sub_group: list[str] = []
     last_factor_id: str | None = None
+    all_base_factor_ids: list[str] = []
+    buffer_touched_since_active = False
     factors: list[dict] = []
     for row in rows[1:]:
         # Use recursive=False so that malformed HTML (missing </tr>) cannot cause
@@ -518,24 +705,23 @@ def _parse_table(table) -> tuple[list[str], str, list[dict], dict[str, str]]:
                     # Use label-word matching to identify named sub-aggregates.
                     # e.g. "mineral matter including stones" → filter for "stones";
                     # "conspicuous admixture" → no buffer member matches → full buffer.
-                    label_lower = factor_label.lower().replace("total %", "").strip()
-                    _stop = {"", "and", "or", "the", "of", "in", "with", "including"}
-                    label_words = {
-                        w for w in re.split(r"[^a-z]+", label_lower) if w not in _stop
-                    }
-                    named = [
-                        fid for fid in current_sub_group
-                        if any(w in fid for w in label_words)
-                    ]
+                    named = _named_match(current_sub_group, _label_words(factor_label))
                     aggregates = named if named else current_sub_group.copy()
                 elif last_factor_id is not None:
                     aggregates = [last_factor_id]
                 else:
                     aggregates = None
-                # intentionally do NOT reset current_sub_group
+                # intentionally do NOT reset current_sub_group, but this row has
+                # now "read" it — a later row that finds nothing new since is stale.
+                buffer_touched_since_active = False
             elif current_sub_group:
-                aggregates = current_sub_group.copy()
+                if buffer_touched_since_active:
+                    named = _named_match(current_sub_group, _label_words(factor_label))
+                    aggregates = named if named else current_sub_group.copy()
+                else:
+                    aggregates = all_base_factor_ids.copy()
                 current_sub_group = []
+                buffer_touched_since_active = False
             elif last_factor_id is not None:
                 aggregates = [last_factor_id]
                 current_sub_group = []
@@ -544,10 +730,14 @@ def _parse_table(table) -> tuple[list[str], str, list[dict], dict[str, str]]:
                 current_sub_group = []
         else:
             aggregates = None
+            if not is_aggregate:
+                all_base_factor_ids.append(factor_id)
             if has_border_top:
                 current_sub_group = [factor_id]
+                buffer_touched_since_active = True
             elif unit == "%" and has_numeric:
                 current_sub_group.append(factor_id)
+                buffer_touched_since_active = True
 
         last_factor_id = factor_id
 
@@ -708,6 +898,14 @@ def _parse_wheat(html: str, grain_id: str) -> dict:
     return _assemble(grain_id, soup, slice(0, 3))
 
 
+def _parse_cwrw(html: str, grain_id: str) -> dict:
+    # CWRW has a 4th grade table beyond the standard 3 ("grading factors
+    # included in total damage") that the other wheat classes fold into their
+    # single "grading factors" table.
+    soup = BeautifulSoup(html, "html.parser")
+    return _assemble(grain_id, soup, slice(0, 4))
+
+
 def _parse_canola(html: str, grain_id: str) -> dict:
     # Tables 0-2: Canola. Tables 3-5: Rapeseed (out of scope for v1).
     soup = BeautifulSoup(html, "html.parser")
@@ -762,6 +960,7 @@ def _parse_soybeans(html: str, grain_id: str) -> dict:
 
 _PARSERS = {
     "wheat": _parse_wheat,
+    "cwrw": _parse_cwrw,
     "canola": _parse_canola,
     "barley_gp_cw": _parse_barley_gp_cw,
     "barley_gp_ce": _parse_barley_gp_ce,
