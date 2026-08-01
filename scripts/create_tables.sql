@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS api_keys (
     email        text NOT NULL,
     created_at   timestamptz NOT NULL DEFAULT now(),
     last_used_at timestamptz,
+    request_count integer not null default 0,
     is_active    boolean NOT NULL DEFAULT true
 );
 

@@ -301,6 +301,7 @@ Hosted in Supabase PostgreSQL. Use UUID primary keys throughout. RLS is enabled 
 | `created_at` | `timestamptz` | |
 | `last_used_at` | `timestamptz` NULLABLE | |
 | `is_active` | `boolean` | default `true` |
+| `request_count` | `integer` | default `0` — incremented on every authenticated request |
 
 #### `changelog`
 
@@ -478,6 +479,9 @@ The key itself is never stored; only its SHA-256 hash is stored in the `api_keys
 
 ```
 gradingfactors-api/
+├── .github/
+│   └── workflows/
+│       └── cgc-check.yml        # Weekly CGC change detection (Fridays 9 PM CDT)
 ├── AGENTS.md                    # Points Claude Code to this brief
 ├── CHANGELOG.md
 ├── LICENSE
@@ -582,6 +586,7 @@ V1 is complete and live as of mid-2026.
 - **Docs site:** All pages live at `gradingfactors.ca`. Content authorship split: Overview, Update Model, Quickstart, About, and Landing pages are human-written; Authentication, Field Reference, and API Reference endpoint pages are AI-assisted.
 - **Database:** Supabase project under `contact@gradingfactors.ca`. Schema created via `scripts/create_tables.sql` and seeded via `scripts/seed_db.py`. RLS enabled on all tables.
 - **Dev tooling:** tmux 3-pane layout (Claude Code / working terminal / server terminal). Activate venv per session. `pyproject.toml` sets `pythonpath = ["."]`.
+- **Monitoring:** UptimeRobot pings `GET /health` every 5 minutes and emails `contact@gradingfactors.ca` on downtime. A GitHub Actions workflow (`.github/workflows/cgc-check.yml`) runs the scraper in read-only mode every Friday at 9 PM CDT and opens a GitHub Issue if any grain has changed. Per-key request counts are tracked in `api_keys.request_count` and updated on every authenticated request alongside `last_used_at`.
 
 ---
 

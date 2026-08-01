@@ -18,7 +18,7 @@ def verify_api_key(x_api_key: str | None = Header(default=None, alias="X-API-Key
 
     result = (
         supabase.table("api_keys")
-        .select("id")
+        .select("id, request_count")
         .eq("key_hash", key_hash)
         .eq("is_active", True)
         .maybe_single()
@@ -29,8 +29,11 @@ def verify_api_key(x_api_key: str | None = Header(default=None, alias="X-API-Key
         raise _UNAUTHORIZED
 
     # Update last_used_at without blocking the response
-    supabase.table("api_keys").update({"last_used_at": "now()"}).eq(
-        "id", result.data["id"]
-    ).execute()
+    supabase.table("api_keys").update(
+        {
+            "last_used_at": "now()",
+            "request_count": (result.data.get("request_count") or 0) + 1,
+        }
+    ).eq("id", result.data["id"]).execute()
 
     return x_api_key
